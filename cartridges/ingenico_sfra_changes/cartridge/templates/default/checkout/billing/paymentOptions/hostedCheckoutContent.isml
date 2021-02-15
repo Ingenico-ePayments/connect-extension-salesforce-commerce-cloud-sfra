@@ -1,0 +1,16 @@
+<isset name="billingForm" value="${pdict.forms.billingForm}" scope="page" />
+<fieldset class="tab-pane ${paymentLoop.first ? 'active' : ''} hostedcreditcard-content" id="hostedcreditcard-content" role="tabpanel" ${paymentLoop.first ? '' : 'disabled'}>
+    <fieldset class="payment-form-fields">
+
+        <input type="hidden" class="form-control"
+                name="${pdict.forms.billingForm.paymentMethod.htmlName}"
+                value="HOSTED_CREDIT_CARD"
+        >
+
+        <div class="row mb-2">
+            <div class="col-sm-12">
+                <small><em>${Resource.msg('ingenico.hostedcheckout.redirectMessage', 'ingenico', null)}</em></small>
+            </div>
+        </div>
+    </fieldset>
+</fieldset>

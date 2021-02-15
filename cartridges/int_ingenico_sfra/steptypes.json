@@ -1,0 +1,23 @@
+{
+    "step-types": {
+        "script-module-step": [
+            {
+                "@type-id": "custom.ProcessIngenicoWebhooks",
+                "@supports-site-context": true,
+                "@supports-organization-context": false,
+                "description": "Processes Ingenico webhooks that have been received, and updates the paymentTransaction custom Ingenico properties",
+                "module": "int_ingenico_sfra/cartridge/scripts/steps/notifications.js",
+                "function": "process",
+                "transactional": true
+            },
+            {
+                "@type-id": "custom.ProcessExpiredOrders",
+                "@supports-site-context": true,
+                "description": "Fail order if order has status 'CREATED' and hosted checkout session is expired.",
+                "module": "int_ingenico_sfra/cartridge/scripts/steps/orders.js",
+                "function": "process",
+                "transactional": true
+            }
+        ]
+    }
+}

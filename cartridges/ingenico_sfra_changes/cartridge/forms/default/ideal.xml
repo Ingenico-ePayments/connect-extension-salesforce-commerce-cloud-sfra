@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+
+       <field formid="issuerId" label="ingenico.label.input.issuerId" type="string" mandatory="true" binding="issuerId"
+           missing-error="error.message.required" value-error="ingenico.error.message.issueridinvalid" parse-error="error.message.required">
+    </field>
+</form>

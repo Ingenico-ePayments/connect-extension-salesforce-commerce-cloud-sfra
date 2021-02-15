@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<payment-settings xmlns="http://www.demandware.com/xml/impex/paymentsettings/2009-09-15">
+
+    <payment-method method-id="HOSTED_CREDIT_CARD">
+        <name xml:lang="x-default">Credit Card via Ingenico</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>INGENICO</processor-id>
+    </payment-method>
+
+    <payment-method method-id="IDEAL">
+        <name xml:lang="x-default">iDeal</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>INGENICO</processor-id>
+        <countries>
+            <country country-code="NL"/>
+        </countries>
+        <currencies>
+            <currency>EUR</currency>
+        </currencies>
+    </payment-method>
+
+    <payment-method method-id="TRUSTLY">
+        <name xml:lang="x-default">Trustly</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>INGENICO</processor-id>
+        <countries>
+            <country country-code="AT"/>
+            <country country-code="BE"/>
+            <country country-code="CZ"/>
+            <country country-code="DK"/>
+            <country country-code="EE"/>
+            <country country-code="FI"/>
+            <country country-code="DE"/>
+            <country country-code="LV"/>
+            <country country-code="LT"/>
+            <country country-code="NL"/>
+            <country country-code="NO"/>
+            <country country-code="PL"/>
+            <country country-code="SK"/>
+            <country country-code="ES"/>
+            <country country-code="SE"/>
+            <country country-code="UK"/>
+        </countries>
+        <currencies>
+            <currency>CZK</currency>
+            <currency>DKK</currency>
+            <currency>EUR</currency>
+            <currency>NOK</currency>
+            <currency>PLN</currency>
+            <currency>GBP</currency>
+            <currency>SEK</currency>
+        </currencies>
+    </payment-method>
+
+    <payment-method method-id="PAYPAL">
+        <name xml:lang="x-default">PayPal</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>INGENICO</processor-id>
+    </payment-method>
+
+    <payment-method method-id="CREDIT_CARD">
+        <name xml:lang="x-default">Credit Card Inline via Ingenico</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>INGENICO</processor-id>
+    </payment-method>
+
+</payment-settings>

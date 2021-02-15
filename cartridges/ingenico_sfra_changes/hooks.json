@@ -1,0 +1,16 @@
+{
+    "hooks": [
+        {
+            "name": "ingenico.transactionUpdate.payment",
+            "script": "./cartridge/scripts/hooks/payment/transactionUpdate/ingenico"
+        },
+        {
+            "name": "ingenico.transactionUpdate.refund",
+            "script": "./cartridge/scripts/hooks/payment/transactionUpdate/ingenico"
+        },
+        {
+            "name": "app.payment.form.processor.ingenico",
+            "script": "./cartridge/scripts/checkout/checkoutHelpers"
+        }
+    ]
+}

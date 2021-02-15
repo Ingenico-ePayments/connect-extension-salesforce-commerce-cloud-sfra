@@ -1,0 +1,54 @@
+<!--- TEMPLATENAME: PaymentInstrumentInfo_INGENICO.isml --->
+
+<iscontent type="text/html" charset="UTF-8" compact="true" />
+<link rel="stylesheet" href="${dw.web.URLUtils.staticURL('/css/ingenico.css')}" />
+<script src="${URLUtils.staticURL('/js/actions.js')}"></script>
+<input type="hidden" id="actionControllerUrl" value="${URLUtils.url('IngenicoActions-Action')}" />
+<input type="hidden" id="errorMessage" value="${Resource.msg('action.error', 'ingenico', null)}" />
+<input type="hidden" id="orderNumber" value="${pdict.Order.getOrderNo()}" />
+<input type="hidden" id="orderStatus" value="${pdict.Order.getStatus().toString()}" />
+
+<div class="payment_info_container">
+    <h2>${Resource.msg('payment.info.title','ingenico',null)}</h2>
+    <div class="summary">
+
+        <isloop iterator="${pdict.Order.getPaymentInstruments().iterator()}" alias="paymentInstrument">
+            <isif condition="${paymentInstrument.paymentTransaction.paymentProcessor.getID() === 'INGENICO'}">
+                <isset name="ingenicoTransactionId" value="${paymentInstrument.paymentTransaction.custom.ingenicoTransactionId}" scope="page"/>
+                <isset name="ingenicoResult" value="${paymentInstrument.paymentTransaction.custom.ingenicoResult}" scope="page"/>
+                <isset name="ingenicoIsRefundable" value="${paymentInstrument.paymentTransaction.custom.ingenicoIsRefundable}" scope="page"/>
+                <isset name="ingenicoIsCancellable" value="${paymentInstrument.paymentTransaction.custom.ingenicoIsCancellable}" scope="page"/>
+                <isset name="ingenicoRefundIDs" value="${paymentInstrument.paymentTransaction.custom.ingenicoRefundIDs}" scope="page"/>
+                <isset name="ingenicoTransactionAmount" value="${paymentInstrument.paymentTransaction.custom.ingenicoTransactionAmount}" scope="page"/>
+                <isset name="ingenicoHostedCheckoutId" value="${paymentInstrument.paymentTransaction.custom.ingenicoHostedCheckoutId}" scope="page"/>
+                <isset name="paymentTransactionUUID" value="${paymentInstrument.paymentTransaction.UUID}" scope="page"/>
+                <isset name="orderNumber" value="${pdict.Order.getOrderNo()}" scope="page"/>
+                <isset name="currencySymbol" value="${dw.util.Currency.getCurrency(pdict.Order.getCurrencyCode()).getSymbol()}" scope="page"/>
+
+                <b>${Resource.msg('payment.info.transaction.id','ingenico',null)}</b>: <isprint value="${ingenicoTransactionId}" />
+                <br />
+                <b>${Resource.msg('payment.info.transaction.status','ingenico',null)}</b>: <isprint value="${ingenicoResult}" />
+                <br />
+                <b>${Resource.msg('payment.info.transaction.amount','ingenico',null)}</b>: <isprint value="${ingenicoTransactionAmount / 100}" />
+                <br />
+            </isif>
+        </isloop>
+    </div>
+
+    <div class="actions">
+        <isif condition="${ingenicoIsCancellable}">
+            <a href='#' class='reject' onclick='cancelPayment(event, "${ingenicoTransactionId}")'>${Resource.msg('action.table.action.reject','ingenico',null)}</a>
+        </isif>
+        <isif condition="${(ingenicoResult === 'PENDING_APPROVAL')}">
+            <a href='#' class='approve' onclick='approvePayment(event, "${orderNumber}", "${ingenicoTransactionId}")'>${Resource.msg('action.table.action.approve','ingenico',null)}</a>
+        </isif>
+        <a href='#' class='update' onclick='updatePaymentStatus(event, "${orderNumber}", "${ingenicoTransactionId}")'>${Resource.msg('action.table.action.status.update','ingenico',null)}</a>
+    </div>
+
+
+</div>
+
+<div class="overlay"></div>
+<!--- All custom paymentTransaction properties will be printed by Commerce Cloud below this template --->
+<!--- Add this header to separate them visually --->
+<b>Custom properties</b>

@@ -1,0 +1,34 @@
+<isset name="billingForm" value="${pdict.forms.billingForm}" scope="page" />
+<isset name="idealFields" value="${pdict.forms.billingForm.idealFields}" scope="page"/>
+
+<isscript>
+    var ingenicoHelpers = require('*/cartridge/scripts/ingenicoHelpers');
+    var issuersResponse = ingenicoHelpers.getIdealIssuers();
+</isscript>
+
+<fieldset class="tab-pane ${paymentLoop.first ? 'active' : ''} ideal-content" id="ideal-content" role="tabpanel" ${paymentLoop.first ? '' : 'disabled'}>
+    <fieldset class="payment-form-fields">
+
+        <input type="hidden" class="form-control"
+                name="${pdict.forms.billingForm.paymentMethod.htmlName}"
+                value="IDEAL"
+        >
+        <div class="row mb-2">
+            <div class="col-sm-12">
+                <div class="form-group ${idealFields.issuerId.mandatory === true ? 'required' : ''}">
+                    <label class="form-control-label" for="issuerId">
+                        <isprint value="${idealFields.issuerId.label}" encoding="htmlcontent" />
+                    </label>
+                    <select class="form-control custom-select" id="issuerId"
+                        name="${idealFields.issuerId.htmlName}" ${idealFields.issuerId.mandatory ? 'required' : ''}>
+                        <option selected hidden value="" disabled>${issuersResponse.placeholderLabel}</option>
+                        <isloop items=${issuersResponse.issuers} var="issuer">
+                            <option id="${issuer.id}" value="${issuer.id}">${issuer.displayName}</option>
+                        </isloop>
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</fieldset>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
+    <custom-type type-id="ingenicoNotification">
+        <staging-mode>no-staging</staging-mode>
+        <storage-scope>organization</storage-scope>
+        <key-definition attribute-id="id">
+            <type>string</type>
+            <min-length>0</min-length>
+        </key-definition>
+        <attribute-definitions>
+            <attribute-definition attribute-id="createTime">
+                <display-name xml:lang="x-default">create time</display-name>
+                <description xml:lang="x-default">UTC date time (ISO-8601) when the event was registered on the webhooks system.</description>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>true</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="invoiceNumber">
+                <display-name xml:lang="x-default">invoice number</display-name>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="merchantId">
+                <display-name xml:lang="x-default">Ingenico merchantId</display-name>
+                <description xml:lang="x-default">The id of the merchant the event occurred on.</description>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="orderNumber">
+                <display-name xml:lang="x-default">order number</display-name>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>true</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="payload">
+                <display-name xml:lang="x-default">payload</display-name>
+                <description xml:lang="x-default">Event content retrieved from the webhook. This is a string representation of the JSON object.</description>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>true</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="processed">
+                <display-name xml:lang="x-default">processed</display-name>
+                <description xml:lang="x-default">Indicates if the Notification has been processed by a job</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="reference">
+                <display-name xml:lang="x-default">notification reference</display-name>
+                <description xml:lang="x-default">An identifier (e.g. merchantReference or refundId) that can be used for grouping notifications.</description>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>true</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="sortKey">
+                <display-name xml:lang="x-default">sort key</display-name>
+                <description xml:lang="x-default">Contains the createTime without the last "Z". It can be used for sorting on the createTime.</description>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="transactionId">
+                <display-name xml:lang="x-default">transaction ID</display-name>
+                <description xml:lang="x-default">An unique refund or payment transaction identifier</description>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>true</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="type">
+                <display-name xml:lang="x-default">webhook event type</display-name>
+                <description xml:lang="x-default">Type of the event in the format: [object].[event]. For example: "payment.create"</description>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="merchantReference">
+                <display-name xml:lang="x-default">merchant reference</display-name>
+                <description xml:lang="x-default">A reference that is provided by the merchant.</description>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+        </attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="general">
+                <display-name xml:lang="x-default">General</display-name>
+                <attribute attribute-id="type"/>
+                <attribute attribute-id="lastModified" system="true"/>
+                <attribute attribute-id="payload"/>
+                <attribute attribute-id="merchantId"/>
+                <attribute attribute-id="creationDate" system="true"/>
+                <attribute attribute-id="transactionId"/>
+                <attribute attribute-id="orderNumber"/>
+                <attribute attribute-id="invoiceNumber"/>
+                <attribute attribute-id="reference"/>
+                <attribute attribute-id="merchantReference"/>
+                <attribute attribute-id="processed"/>
+            </attribute-group>
+        </group-definitions>
+    </custom-type>
+</metadata>

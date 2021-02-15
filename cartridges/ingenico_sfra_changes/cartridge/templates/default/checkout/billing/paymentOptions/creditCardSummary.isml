@@ -1,0 +1,3 @@
+<div class="credit-card-type">
+    <span>${Resource.msg('msg.payment.type.credit', 'confirmation', null)}</span>
+</div>

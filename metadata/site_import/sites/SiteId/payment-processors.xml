@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<payment-processors xmlns="http://www.demandware.com/xml/impex/paymentprocessor/2007-03-31">
+    <payment-processor processor-id="INGENICO">
+        <description>Process payments using Ingenico's API</description>
+        <preferences>
+            <all-instances/>
+            <development>
+                <preference preference-id="ingenicoApiService">IngenicoPayment</preference>
+                <preference preference-id="ingenicoVariantId"></preference>
+                <preference preference-id="ingenicoRequiresApproval">false</preference>
+            </development>
+            <staging/>
+            <production/>
+        </preferences>
+    </payment-processor>
+</payment-processors>

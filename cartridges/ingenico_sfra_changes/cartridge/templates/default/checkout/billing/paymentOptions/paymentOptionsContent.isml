@@ -1,0 +1,17 @@
+<isloop items="${pdict.order.billing.payment.applicablePaymentMethods}" var="paymentOption" status="paymentLoop">
+    <isif condition="${paymentOption.ID === 'HOSTED_CREDIT_CARD'}">
+        <isinclude template="checkout/billing/paymentOptions/hostedCheckoutContent" />
+    </isif>
+    <isif condition="${paymentOption.ID === 'CREDIT_CARD'}">
+        <isinclude template="checkout/billing/paymentOptions/creditCardContent" />
+    </isif>
+    <isif condition="${paymentOption.ID === 'IDEAL'}">
+        <isinclude template="checkout/billing/paymentOptions/idealContent" />
+    </isif>
+    <isif condition="${paymentOption.ID === 'TRUSTLY'}">
+        <isinclude template="checkout/billing/paymentOptions/trustlyContent" />
+    </isif>
+    <isif condition="${paymentOption.ID === 'PAYPAL'}">
+        <isinclude template="checkout/billing/paymentOptions/paypalContent" />
+    </isif>
+</isloop>

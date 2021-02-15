@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jobs xmlns="http://www.demandware.com/xml/impex/jobs/2015-07-01">
+    <job job-id="ProcessIngenicoWebhooks" priority="0">
+        <description>This jobs processes webhooks that are stored in 'ingenicoNotification' custom objects.</description>
+        <parameters/>
+        <flow>
+            <context site-id="RefArch"/>
+            <step step-id="ProcessIngenicoWebhooks" type="custom.ProcessIngenicoWebhooks" enforce-restart="false">
+                <description/>
+                <parameters/>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-recurring enabled="true">
+				<recurrence>
+					<date>2020-07-21Z</date>
+					<time>12:19:57.000Z</time>
+					<interval>1m</interval>
+				</recurrence>
+            </run-recurring>
+        </triggers>
+    </job>
+    <job job-id="ProcessExpiredOrders" priority="0">
+        <description>This job cleans up orders for which customers didn't complete the payment and the hosted checkout session has already expired.</description>
+        <parameters/>
+        <flow>
+            <context site-id="RefArch"/>
+            <step step-id="ProcessExpiredOrders" type="custom.ProcessExpiredOrders" enforce-restart="false">
+                <description/>
+                <parameters/>
+            </step>
+        </flow>
+        <rules/>
+        <triggers>
+            <run-recurring enabled="true">
+				<recurrence>
+					<date>2020-07-21Z</date>
+					<time>12:19:57.000Z</time>
+					<interval>60m</interval>
+				</recurrence>
+            </run-recurring>
+        </triggers>
+    </job>
+</jobs>

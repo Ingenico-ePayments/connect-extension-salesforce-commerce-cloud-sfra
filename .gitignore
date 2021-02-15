@@ -1,0 +1,9 @@
+node_modules/
+.idea/
+package/
+.env
+cartridges/ingenico_sfra_changes/cartridge/static/default/js/
+cartridges/ingenico_sfra_changes/cartridge/static/default/css/
+cartridges/int_ingenico_sfra/cartridge/static/default/js/checkout.js
+dw.json
+.vscode/

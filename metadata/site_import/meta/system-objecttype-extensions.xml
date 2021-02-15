@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
+
+    <type-extension type-id="OrderPaymentInstrument">
+        <custom-attribute-definitions>
+            <attribute-definition attribute-id="ingenicoEncryptedCustomerInput">
+                <display-name xml:lang="x-default">ingenico encrypted customer input</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoIssuerId">
+                <display-name xml:lang="x-default">Selected issuer name</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="saveCard">
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="storedPaymentUUID">
+                <display-name xml:lang="x-default">stored payment UUID</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+        </custom-attribute-definitions>
+    </type-extension>
+
+    <type-extension type-id="PaymentTransaction">
+        <custom-attribute-definitions>
+            <attribute-definition attribute-id="ingenicoHostedCheckoutId">
+                <display-name xml:lang="x-default">Ingenico HostedCheckoutId</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoIsCancellable">
+                <display-name xml:lang="x-default">Ingenico isCancellable transaction</display-name>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoIsRefundable">
+                <display-name xml:lang="x-default">Ingenico isRefundable transaction</display-name>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoLastProcessedNotificationSortKey">
+                <display-name xml:lang="x-default">SortKey for the last succesfully processed Notification.</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoMerchantReference">
+                <display-name xml:lang="x-default">Ingenico merchant reference</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoRedirect">
+                <display-name xml:lang="x-default">Ingenico redirect url</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoResult">
+                <display-name xml:lang="x-default">Ingenico result</display-name>
+                <description xml:lang="x-default">The payment result returned by the Ingenico API.</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+                <attribute-definition attribute-id="ingenicoRETURNMAC">
+                <display-name xml:lang="x-default">Ingenico RETURNMAC</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoTransactionAmount">
+                <display-name xml:lang="x-default">Ingenico transaction amount</display-name>
+                <description xml:lang="x-default">The amount of the payment.</description>
+                <type>integer</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoTransactionId">
+                <display-name xml:lang="x-default">Ingenico transactionId</display-name>
+                <description xml:lang="x-default">Unique transaction ID generated by the Ingenico API.</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+        </custom-attribute-definitions>
+    </type-extension>
+    <type-extension type-id="ServiceCredential">
+        <custom-attribute-definitions>
+            <attribute-definition attribute-id="ingenicoApiClientId">
+                <display-name xml:lang="x-default">API Key ID</display-name>
+                <description xml:lang="x-default">Your API Key ID that can be found at https://preprod.account.ingenico.com/account/apikey</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoApiClientSecret">
+                <display-name xml:lang="x-default">API Secret Key</display-name>
+                <description xml:lang="x-default">Your Secret API key that can be found at https://preprod.account.ingenico.com/account/apikey</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoApiEnvironment">
+                <display-name xml:lang="x-default">Ingenico API environment</display-name>
+                <type>enum-of-string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <value-definitions>
+                    <value-definition>
+                        <display xml:lang="x-default">Production</display>
+                        <value>PROD</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">Pre-Production</display>
+                        <value>PREPROD</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">Sandbox</display>
+                        <value>SANDBOX</value>
+                    </value-definition>
+                </value-definitions>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoMerchantId">
+                <display-name xml:lang="x-default">Merchant ID</display-name>
+                <description xml:lang="x-default">Your Merchant ID that can be found at https://preprod.account.ingenico.com/account/merchantid</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoWebhooksSecret">
+                <display-name xml:lang="x-default">Webhooks Secret</display-name>
+                <description xml:lang="x-default">Your Webhooks Secret key that can be found at https://preprod.account.ingenico.com/account/webhookskey</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+        </custom-attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="IngenicoCredentials">
+                <display-name xml:lang="x-default">IngenicoCredentials</display-name>
+                <attribute attribute-id="ingenicoMerchantId"/>
+                <attribute attribute-id="ingenicoApiEnvironment"/>
+                <attribute attribute-id="ingenicoApiClientId"/>
+                <attribute attribute-id="ingenicoApiClientSecret"/>
+                <attribute attribute-id="ingenicoWebhooksSecret"/>
+            </attribute-group>
+        </group-definitions>
+    </type-extension>
+
+    <type-extension type-id="SitePreferences">
+        <custom-attribute-definitions>
+            <attribute-definition attribute-id="ingenicoApiService">
+                <display-name xml:lang="x-default">Ingenico API service</display-name>
+                <description xml:lang="x-default">Name of the service that is specified in Administration -&gt; Services.</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+                <default-value>IngenicoPayment</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoRequiresApproval">
+                <display-name xml:lang="x-default">Card approval before capture</display-name>
+                <description xml:lang="x-default">Requires your approval before capturing the payment</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>false</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoVariantId">
+                <display-name xml:lang="x-default">Hosted checkout variant ID for registered customer flow</display-name>
+                <description xml:lang="x-default">You can provide a Hosted Checkout variant ID in order to direct your consumer to a specific variant of the hosted payment pages.</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoVariantIdGuest">
+                <display-name xml:lang="x-default">Hosted checkout variant ID for Guest Customer flow </display-name>
+                <description xml:lang="x-default">You can provide a Hosted Checkout variant ID in order to direct your consumer to a specific variant of the hosted payment pages.</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+        </custom-attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="INGENICO">
+                <display-name xml:lang="x-default">Ingenico Configurations</display-name>
+                <attribute attribute-id="ingenicoApiService"/>
+                <attribute attribute-id="ingenicoRequiresApproval"/>
+                <attribute attribute-id="ingenicoVariantId"/>
+                <attribute attribute-id="ingenicoVariantIdGuest"/>
+            </attribute-group>
+        </group-definitions>
+    </type-extension>
+
+    <type-extension type-id="OrderAddress">
+        <attribute-definition attribute-id="countryCode">
+            <value-definitions>
+                <value-definition>
+                    <display xml:lang="x-default">United States</display>
+                    <value>US</value>
+                </value-definition>
+                <value-definition>
+                    <display xml:lang="x-default">The Netherlands</display>
+                    <value>NL</value>
+                </value-definition>
+            </value-definitions>
+        </attribute-definition>
+    </type-extension>
+
+    <type-extension type-id="CustomerAddress">
+        <attribute-definition attribute-id="countryCode">
+            <value-definitions>
+                <value-definition>
+                    <display xml:lang="x-default">United States</display>
+                    <value>US</value>
+                </value-definition>
+                <value-definition>
+                    <display xml:lang="x-default">The Netherlands</display>
+                    <value>NL</value>
+                </value-definition>
+            </value-definitions>
+        </attribute-definition>
+    </type-extension>
+</metadata>

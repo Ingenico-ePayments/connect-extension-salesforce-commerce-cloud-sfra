@@ -17,14 +17,24 @@
         <div class="row">
             <div class="${pdict.returningCustomer ? 'col-sm-6 offset-sm-3' : 'col-sm-6 offset-sm-3 offset-md-0'}">
                 <h2 class="order-thank-you-msg">${Resource.msg('msg.placed.order.thank.you','confirmation',null)}</h2>
-                <p class="order-thank-you-email-msg"><isprint value="${Resource.msgf('info.receive.email.confirmation', 'confirmation', null, pdict.order.orderEmail)}" encoding="htmlcontent" /></p>
-                <div class="alert alert-danger error-message" role="alert">
-                    <p class="error-message-text">
-                    <isif condition=${pdict.message === 'unknown-payment-state'}>
-                        <isprint value="${Resource.msg('error.payment.unknown.state', 'confirmation', null)}"/>
-                    </isif>
-                    </p>
-                </div>
+                <p class="order-thank-you-email-msg"><isprint value="${pdict.message === 'already-paid' ?
+                Resource.msgf('info.already.received.email.confirmation', 'confirmation', null, pdict.order.orderEmail) :
+                Resource.msgf('info.receive.email.confirmation', 'confirmation', null, pdict.order.orderEmail)}" encoding="htmlcontent" /></p>
+                <isif condition=${pdict.message === 'already-paid'}>
+                    <div class="alert alert-success" role="alert">
+                        <p>
+                            <isprint value="${Resource.msg('info.payment.already.paid', 'confirmation', null)}"/>
+                        </p>
+                     </div>
+                <iselse>
+                    <div class="alert alert-info error-message" role="alert">
+                        <p class="error-message-text">
+                            <isif condition=${pdict.message === 'unknown-payment-state'}>
+                            <isprint value="${Resource.msg('error.payment.unknown.state', 'confirmation', null)}"/>
+                            </isif>
+                        </p>
+                    </div>
+                </isif>
             </div>
         </div>
         <div class="row">

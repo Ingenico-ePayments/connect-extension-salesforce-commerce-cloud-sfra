@@ -6,7 +6,7 @@ var Logger = require('dw/system/Logger');
 var ingenicoLogger = Logger.getLogger('Ingenico');
 var Transaction = require('dw/system/Transaction');
 var OrderMgr = require('dw/order/OrderMgr');
-var StringUtil = require(request.httpHost ? '*/cartridge/scripts/util/StringUtil' : '../util/StringUtil');
+var StringUtil = require(request.httpHost ? '~/cartridge/scripts/util/StringUtil' : '../util/StringUtil');
 
 var ATTEMPT_NUMBER_START_POSITION = 25;
 var ATTEMPT_NUMBER_LENGTH = 5;
@@ -22,9 +22,6 @@ function getPaymentTransaction(order, reference) {
     var collections = require('app_storefront_base/cartridge/scripts/util/collections');
     var result = null;
 
-    if (!order) {
-        return null;
-    }
     collections.forEach(order.paymentInstruments, function (paymentInstrument) {
         if (paymentInstrument.paymentTransaction.custom.ingenicoMerchantReference === reference) {
             result = paymentInstrument.paymentTransaction;
@@ -60,7 +57,7 @@ function isNotificationMoreRecent(paymentTransaction, notification) {
 }
 
 /**
- * Checks if a new attempt exists for notificaiton
+ * Checks if a new attempt exists for notification
  * @param {Object} transactionIds  Array of transactionIds
  * @param {Object} currentNotification Instance of custom object type "ingenicoNotification"
  * @returns {boolean} true if there is a newer attempt
@@ -82,17 +79,14 @@ function newAttemptInProgress(transactionIds, currentNotification) {
 
 /**
  * Saves custom Ingenico properties on a transaction based on a transaction status update.
- * @param {dw.order.paymentTransaction} paymentTransaction paymentTransaction to save the properties on.
+ * @param {dw.order.PaymentTransaction} paymentTransaction paymentTransaction to save the properties on.
  * @param {Object} statusUpdate Update to apply on the transaction.
  * @param {string} action of the notification
  */
 function saveIngenicoCustomProperties(paymentTransaction, statusUpdate, action) {
     if (action === 'payment') {
-        paymentTransaction.custom.ingenicoTransactionAmount = statusUpdate.paymentOutput.amountOfMoney.amount;
-        paymentTransaction.custom.ingenicoTransactionId = statusUpdate.id;
-        paymentTransaction.custom.ingenicoResult = statusUpdate.status;
-        paymentTransaction.custom.ingenicoIsCancellable = statusUpdate.statusOutput.isCancellable;
-        paymentTransaction.custom.ingenicoIsRefundable = statusUpdate.statusOutput.isRefundable;
+        var ingenicoResponseHelpers = require('*/cartridge/scripts/ingenicoResponseHelpers');
+        ingenicoResponseHelpers.populatePaymentTransactionWithPaymentOutput(paymentTransaction, statusUpdate);
     }
 }
 
@@ -109,17 +103,16 @@ function getBrandName(paymentProductId) {
 /**
  * Process token notification
  * @param {string} customerId of the customer
- * @param {string} notification that needs to be processed
+ * @param {Object} notification that needs to be processed
  * @param {string} reference id of the token
  * @param {Object} payload of the notification
- * @param {string} eventType of the notification (e.g. token.created)
  * @param {string} createTime of the notification
  */
-function processToken(customerId, notification, reference, payload, eventType, createTime) {
+function processToken(customerId, notification, reference, payload, createTime) {
     var CustomerMgr = require('dw/customer/CustomerMgr');
     var Transaction = require('dw/system/Transaction');
 
-    if (eventType !== 'token.deleted') {
+    if (notification.custom.type !== 'token.deleted') {
         var customer = CustomerMgr.getCustomerByCustomerNumber(customerId);
         var wallet = customer.getProfile().getWallet();
 
@@ -191,7 +184,7 @@ function processTransaction(transaction) {
         var processMode = mode.PROCESS;
         try {
             if (action === 'token') {
-                processToken(customerId, notification, reference, payload, notification.custom.type, createTime);
+                processToken(customerId, notification, reference, payload, createTime);
             } else {
                 // get the latest item of the batch and determine if it is older than 10 seconds,
                 // if not, item of this batch must be skipped.
@@ -212,11 +205,11 @@ function processTransaction(transaction) {
                         processMode = mode.IGNORE;
                     }
 
-                    paymentTransaction = getPaymentTransaction(order, merchantReference);
-
                     if (!order) {
                         throw new Error('Order not found');
                     }
+
+                    paymentTransaction = getPaymentTransaction(order, merchantReference);
 
                     if (!paymentTransaction) {
                         throw new Error('PaymentTransaction not found');
@@ -241,9 +234,11 @@ function processTransaction(transaction) {
 
                     if (processMode === mode.IGNORE) {
                         logDetails = 'This webhook was ignored since a more recent webhook has been received.';
-                        Transaction.wrap(function () {
-                            order.trackOrderChange('The webhook of transaction with ID ' + payload.id + ' and status ' + payload.status + ' has been ignored since a more recent webhook has been received.');
-                        });
+                        if (order) {
+                            Transaction.wrap(function () {
+                                order.trackOrderChange('The webhook of transaction with ID ' + payload.id + ' and status ' + payload.status + ' has been ignored since a more recent webhook has been received.');
+                            });
+                        }
                     }
 
                     ingenicoLogger.info('Processed webhook for order "{0}", reference number "{1}" and createTime {2}.\n{3}', orderNumber, reference, createTime, logDetails);

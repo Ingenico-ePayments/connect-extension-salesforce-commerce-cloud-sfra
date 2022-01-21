@@ -1,0 +1,14 @@
+<isscript>
+    var assets = require('*/cartridge/scripts/assets.js');
+    assets.addJs('/js/googlepay.js')
+    assets.addCss('/css/googlepay.css')
+</isscript>
+
+<div id="googlepay-button-container">
+    <div id="google-pay-button" data-from-cart="true"></div>
+</div>
+
+<isset name="googlePayData" value="${require('*/cartridge/scripts/checkout/ingenicoCheckoutHelper').getIngenicoExpressCheckoutData('GOOGLE_PAY')}" scope="page" />
+<input type="hidden" id="ingenico_googlepay_data" value="${JSON.stringify(googlePayData)}">
+
+<script async src="https://pay.google.com/gp/p/js/pay.js"></script>

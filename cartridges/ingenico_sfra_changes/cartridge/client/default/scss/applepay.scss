@@ -1,0 +1,27 @@
+.apple-button-container {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.product-detail > .apple-pay-button {
+  width: 240px;
+}
+
+.apple-pay-button {
+  display: inline-block;
+  -webkit-appearance: -apple-pay-button;
+  -apple-pay-button-type: plain; /* Use any supported button type. */
+  height: 40px;
+}
+
+.apple-pay-button-black {
+  -apple-pay-button-style: black;
+}
+
+.apple-pay-button-white {
+  -apple-pay-button-style: white;
+}
+
+.apple-pay-button-white-with-line {
+  -apple-pay-button-style: white-outline;
+}

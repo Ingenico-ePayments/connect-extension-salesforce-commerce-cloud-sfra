@@ -3,6 +3,10 @@
         {
             "name": "app.payment.processor.ingenico",
             "script": "./cartridge/scripts/hooks/payment/processor/ingenico"
+        },
+        {
+            "name": "dw.order.payment.authorize",
+            "script": "./cartridge/scripts/hooks/payment/processor/methods/payment_link.js"
         }
     ]
 }

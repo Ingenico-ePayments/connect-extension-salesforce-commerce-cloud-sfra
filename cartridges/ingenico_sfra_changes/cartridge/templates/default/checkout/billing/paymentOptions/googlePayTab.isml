@@ -1,0 +1,10 @@
+<li class="nav-item" data-method-id="${paymentOption.ID}">
+    <a class="nav-link ${paymentLoop.first ? 'active' : ''}" data-toggle="tab" href="#googlepay-content" role="tab">
+        <img class="googlepay-option"
+                src="https://assets.pay1.preprod.secured-by-ingenico.com/templates/master/global/css/img/ppimages/pp_logo_320_v3.png"
+                height="32"
+                alt="${paymentOption.name}"
+                title="${paymentOption.name}"
+        >
+    </a>
+</li>

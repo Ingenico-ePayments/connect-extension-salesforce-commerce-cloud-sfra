@@ -6,6 +6,7 @@
     <isscript>
         var assets = require('*/cartridge/scripts/assets.js');
         assets.addJs('/js/checkout.js');
+        assets.addJs('/js/cartIngenico.js');
         assets.addCss('/css/checkout/checkout.css');
     </isscript>
 
@@ -45,32 +46,49 @@
                 <div class="alert alert-danger error-message" role="alert">
                     <p class="error-message-text">
                         <isif condition=${pdict.paymentError === 'PAYMENT-NOT-VALID'}>
-                            ${Resource.msg('error.payment.not.valid', 'checkout', null)}
+                        ${Resource.msg('error.payment.not.valid', 'checkout', null)}
                         </isif>
                         <isif condition=${pdict.paymentError === 'PAYMENT-CANCELLED'}>
-                            ${Resource.msg('error.payment.cancelled', 'checkout', null)}
+                        ${Resource.msg('error.payment.cancelled', 'checkout', null)}
                         </isif>
                     </p>
                 </div>
 
-                <!-- Step 1: Shipping -->
+                <!-- Step 1: Customer -->
+                <iscomment>We only allow edits for non-registered customers</iscomment>
+                <isif condition="${!pdict.customer.registeredUser}">
+                    <isinclude template="checkout/customer/customer" />
+                </isif>
+                <div class="card customer-summary">
+                    <div class="card-header clearfix">
+                        <h2 class="pull-left card-header-custom">${Resource.msg('heading.checkout.customer', 'checkout', null)}</h2>
+                        <isif condition="${!pdict.customer.registeredUser}">
+                            <button class="edit-button pull-right" aria-label="${Resource.msg('action.edit.step.msg.customer', 'checkout', null)}">${Resource.msg('action.edit.step', 'checkout', null)}</button>
+                        </isif>
+                    </div>
+                    <div class="card-body">
+                        <isinclude template="checkout/customer/customerSummary" />
+                    </div>
+                </div>
+
+                <!-- Step 2: Shipping -->
                 <isinclude template="checkout/shipping/shipping" />
                 <div class="card shipping-summary">
                     <div class="card-header clearfix">
                         <h2 class="pull-left card-header-custom">${Resource.msg('heading.checkout.shipping', 'checkout', null)}</h2>
-                        <span class="edit-button pull-right">${Resource.msg('action.edit.step', 'checkout', null)}</span>
+                        <button class="edit-button pull-right" aria-label="${Resource.msg('action.edit.step.msg.shipping', 'checkout', null)}">${Resource.msg('action.edit.step', 'checkout', null)}</button>
                     </div>
                     <div class="card-body">
                         <isinclude template="checkout/shipping/shippingSummary" />
                     </div>
                 </div>
 
-                <!-- Step 2: Payment and Billing-->
+                <!-- Step 3: Payment and Billing-->
                 <isinclude template="checkout/billing/billing" />
                 <div class="card payment-summary">
                     <div class="card-header clearfix">
                         <h2 class="pull-left card-header-custom">${Resource.msg('heading.payment', 'checkout', null)}</h2>
-                        <span class="edit-button pull-right">${Resource.msg('action.edit.step', 'checkout', null)}</span>
+                        <button class="edit-button pull-right" aria-label="${Resource.msg('action.edit.step.msg.payment', 'checkout', null)}">${Resource.msg('action.edit.step', 'checkout', null)}</button>
                     </div>
 
                     <div class="card-body">
@@ -85,7 +103,7 @@
                     <div class="col-12 next-step-button">
                         <div class="mb-sm-3">
                             <button class="btn btn-primary btn-block submit-shipping" type="submit" name="submit" value="submit-shipping" <isif condition="${pdict.order.usingMultiShipping && !pdict.order.shippable}">disabled</isif>>
-                                ${Resource.msg('button.next.payment', 'checkout', null)}
+                            ${Resource.msg('button.next.payment', 'checkout', null)}
                             </button>
 
                             <button class="btn btn-primary btn-block submit-payment" type="submit" name="submit" value="submit-payment">
@@ -121,4 +139,5 @@
     </div>
     <isinclude template="checkout/shipping/shippingAddressTemplate" />
 
+    <input type="hidden" id="isFromCart" value="${pdict.isFromCart}">
 </isdecorate>

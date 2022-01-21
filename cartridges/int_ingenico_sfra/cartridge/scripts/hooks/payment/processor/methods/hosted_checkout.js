@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 'use strict';
 
 var Transaction = require('dw/system/Transaction');
@@ -12,7 +11,7 @@ var ingenicoPreferences = require('*/cartridge/scripts/ingenicoPreferences');
  * @returns {Object} returns an error object
  */
 function handle(basket, paymentInformation) {
-    var requiresApproval = ingenicoPreferences.getRequiresApproval();
+    var requiresApproval = ingenicoPreferences.getCardRequiresApproval();
     Transaction.wrap(function () {
         var paymentType = requiresApproval ? PaymentTransaction.TYPE_AUTH : PaymentTransaction.TYPE_CAPTURE;
         paymentInformation.paymentInstrument.paymentTransaction.setType(paymentType);
@@ -22,14 +21,14 @@ function handle(basket, paymentInformation) {
 
 /**
 * Creates a hosted checkout via the Ingenico API
-* @param {dw.order.PaymentInstrument} paymentInstrument The payment instrument
-* @param {dw.order.Order} order Order associated with the payment.
+ * @param {dw.order.Order} order associated with the payment.
+* @param {dw.order.OrderPaymentInstrument} paymentInstrument The payment instrument
 */
-function authorize(paymentInstrument, order) {
+function authorize(order, paymentInstrument) {
     var ingenicoHelpers = require('*/cartridge/scripts/ingenicoHelpers');
     var ingenicoPayloadHelpers = require('*/cartridge/scripts/ingenicoPayloadHelpers');
 
-    var requiresApproval = ingenicoPreferences.getRequiresApproval();
+    var requiresApproval = ingenicoPreferences.getCardRequiresApproval();
     var variantId = ingenicoPreferences.getVariantId();
     var variantIdGuest = ingenicoPreferences.getVariantIdGuest();
     var customer = order.getCustomer();

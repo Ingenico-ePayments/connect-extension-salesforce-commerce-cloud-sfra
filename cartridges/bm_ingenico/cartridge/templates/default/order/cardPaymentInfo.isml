@@ -1,0 +1,23 @@
+<isif condition="${ingenicoPaymentMethodSpecificOutput && ingenicoPaymentMethodSpecificOutput.card}">
+    <!-- Card specific attributes -->
+    <br />
+    <h3>${Resource.msg('payment.info.card.title','ingenico',null)}</h3>
+
+    <b>${Resource.msg('payment.info.card.authCode','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.authorisationCode}" />
+    <br />
+    <isif condition="${ingenicoPaymentMethodSpecificOutput.fraudResults}">
+        <b>${Resource.msg('payment.info.card.fraud.fraudServiceResult','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.fraudResults.fraudServiceResult}" />
+        <br />
+        <b>${Resource.msg('payment.info.card.fraud.avsResult','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.fraudResults.avsResult}" />
+        <br />
+        <b>${Resource.msg('payment.info.card.fraud.cvvResult','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.fraudResults.cvvResult}" />
+        <br />
+        <isif condition="${ingenicoPaymentMethodSpecificOutput.fraudResults.retailDecisions}">
+            <b>${Resource.msg('payment.info.card.fraud.retail.fraudCode','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.fraudResults.retailDecisions.fraudCode}" />
+            <br />
+            <b>${Resource.msg('payment.info.card.fraud.retail.fraudNeural','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.fraudResults.retailDecisions.fraudNeural}" />
+            <br />
+            <b>${Resource.msg('payment.info.card.fraud.retail.fraudRCF','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.fraudResults.retailDecisions.fraudRCF}" />
+        </isif>
+    </isif>
+</isif>

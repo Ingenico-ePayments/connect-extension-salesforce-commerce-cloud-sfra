@@ -54,7 +54,7 @@
                 <externally-managed-flag>true</externally-managed-flag>
             </attribute-definition>
             <attribute-definition attribute-id="ingenicoLastProcessedNotificationSortKey">
-                <display-name xml:lang="x-default">SortKey for the last succesfully processed Notification.</display-name>
+                <display-name xml:lang="x-default">SortKey for the last successfully processed Notification.</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>true</externally-managed-flag>
@@ -92,7 +92,7 @@
             <attribute-definition attribute-id="ingenicoTransactionAmount">
                 <display-name xml:lang="x-default">Ingenico transaction amount</display-name>
                 <description xml:lang="x-default">The amount of the payment.</description>
-                <type>integer</type>
+                <type>double</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
@@ -104,8 +104,29 @@
                 <externally-managed-flag>true</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
+            <attribute-definition attribute-id="ingenicoHostedCheckoutExpiryDate">
+                <display-name xml:lang="x-default">Ingenico hosted checkout expiry date </display-name>
+                <type>double</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoPayByLinkUrl">
+                <display-name xml:lang="x-default">Ingenico Pay-By-Link</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoPaymentMethodSpecificOutput">
+                <display-name xml:lang="x-default">Ingenico payment method specific output</display-name>
+                <type>text</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
         </custom-attribute-definitions>
     </type-extension>
+
     <type-extension type-id="ServiceCredential">
         <custom-attribute-definitions>
             <attribute-definition attribute-id="ingenicoApiClientId">
@@ -182,9 +203,17 @@
                 <min-length>0</min-length>
                 <default-value>IngenicoPayment</default-value>
             </attribute-definition>
-            <attribute-definition attribute-id="ingenicoRequiresApproval">
+            <attribute-definition attribute-id="ingenicoRedirectRequiresApproval">
+                <display-name xml:lang="x-default">Redirect payment approval before capture</display-name>
+                <description xml:lang="x-default">Indicates if redirect payments require manual approval before the funds will be captured.</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>false</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoCardRequiresApproval">
                 <display-name xml:lang="x-default">Card approval before capture</display-name>
-                <description xml:lang="x-default">Requires your approval before capturing the payment</description>
+                <description xml:lang="x-default">Indicates if card payments require manual approval before the funds will be captured.</description>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -206,45 +235,131 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
+            <attribute-definition attribute-id="ingenicoGoogleMerchantName">
+                <display-name xml:lang="x-default">Ingenico Google merchant name</display-name>
+                <description xml:lang="x-default">Merchant name that will be displayed on Google Pay payment sheet.</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoGoogleMerchantId">
+                <display-name xml:lang="x-default">Google merchant ID</display-name>
+                <description xml:lang="x-default">Your Google merchant identifier</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoPayByLinkIV">
+                <display-name xml:lang="x-default">Ingenico Pay-By-Link IV</display-name>
+                <description xml:lang="x-default">Please provide an iv with 16 characters.</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>16</min-length>
+                <regex>^[^\s]{16}$</regex>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoPayByLinkKey">
+                <display-name xml:lang="x-default">Ingenico Pay-By-Link Secret Key</display-name>
+                <description xml:lang="x-default">Please provide a key with 32 characters.</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>32</min-length>
+                <regex>^[^\s]{32}$</regex>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoCountryCodeForPayment">
+                <display-name xml:lang="x-default">Ingenico CountryCode for payment validation</display-name>
+                <description xml:lang="x-default">Determine which country code (billing address or geolocation) should be used for payment validation.</description>
+                <type>enum-of-string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <value-definitions>
+                    <value-definition default="true">
+                        <display xml:lang="x-default">geolocation</display>
+                        <value>GEOLOCATION</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">billing address</display>
+                        <value>BILLINGADDRESS</value>
+                    </value-definition>
+                </value-definitions>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoAppleMerchantName">
+                <display-name xml:lang="x-default">Ingenico Apple merchant name</display-name>
+                <description xml:lang="x-default">Merchant name that will be displayed on Apple Pay payment sheet.</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="ingenicoAppleDomainVerification">
+                <display-name xml:lang="x-default">Ingenico Apple Domain Verification string</display-name>
+                <description xml:lang="x-default">Verification string that will be injected into a page when endpoint /apple-developer-merchantid-domain-association is called.</description>
+                <type>text</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
             <attribute-group group-id="INGENICO">
                 <display-name xml:lang="x-default">Ingenico Configurations</display-name>
                 <attribute attribute-id="ingenicoApiService"/>
-                <attribute attribute-id="ingenicoRequiresApproval"/>
+                <attribute attribute-id="ingenicoRedirectRequiresApproval"/>
+                <attribute attribute-id="ingenicoCardRequiresApproval"/>
                 <attribute attribute-id="ingenicoVariantId"/>
                 <attribute attribute-id="ingenicoVariantIdGuest"/>
+                <attribute attribute-id="ingenicoPayByLinkKey"/>
+                <attribute attribute-id="ingenicoPayByLinkIV"/>
+                <attribute attribute-id="ingenicoCountryCodeForPayment"/>
+                <attribute attribute-id="ingenicoAppleMerchantName"/>
+                <attribute attribute-id="ingenicoAppleDomainVerification"/>
+                <attribute attribute-id="ingenicoGoogleMerchantId"/>
+                <attribute attribute-id="ingenicoGoogleMerchantName"/>
             </attribute-group>
         </group-definitions>
     </type-extension>
 
     <type-extension type-id="OrderAddress">
-        <attribute-definition attribute-id="countryCode">
-            <value-definitions>
-                <value-definition>
-                    <display xml:lang="x-default">United States</display>
-                    <value>US</value>
-                </value-definition>
-                <value-definition>
-                    <display xml:lang="x-default">The Netherlands</display>
-                    <value>NL</value>
-                </value-definition>
-            </value-definitions>
-        </attribute-definition>
+        <system-attribute-definitions>
+            <attribute-definition attribute-id="countryCode">
+                <value-definitions>
+                    <value-definition>
+                        <display xml:lang="x-default">United States</display>
+                        <value>US</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">The Netherlands</display>
+                        <value>NL</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">Germany</display>
+                        <value>DE</value>
+                    </value-definition>
+                </value-definitions>
+            </attribute-definition>
+        </system-attribute-definitions>
     </type-extension>
 
     <type-extension type-id="CustomerAddress">
-        <attribute-definition attribute-id="countryCode">
-            <value-definitions>
-                <value-definition>
-                    <display xml:lang="x-default">United States</display>
-                    <value>US</value>
-                </value-definition>
-                <value-definition>
-                    <display xml:lang="x-default">The Netherlands</display>
-                    <value>NL</value>
-                </value-definition>
-            </value-definitions>
-        </attribute-definition>
+        <system-attribute-definitions>
+            <attribute-definition attribute-id="countryCode">
+                <value-definitions>
+                    <value-definition>
+                        <display xml:lang="x-default">United States</display>
+                        <value>US</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">The Netherlands</display>
+                        <value>NL</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">Germany</display>
+                        <value>DE</value>
+                    </value-definition>
+                </value-definitions>
+            </attribute-definition>
+        </system-attribute-definitions>
     </type-extension>
 </metadata>

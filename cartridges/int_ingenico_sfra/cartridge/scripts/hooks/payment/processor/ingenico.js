@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 'use strict';
 
 var Transaction = require('dw/system/Transaction');
@@ -16,8 +15,16 @@ function getMethodHandler(paymentMethod) {
     var handler;
     var paymentProductId;
     switch (paymentMethod) {
+        case 'APPLE_PAY':
+            handler = require('./methods/mobile_method');
+            paymentProductId = 302;
+            break;
         case 'CREDIT_CARD':
             handler = require('./methods/card_method');
+            break;
+        case 'GOOGLE_PAY':
+            handler = require('./methods/mobile_method');
+            paymentProductId = 320;
             break;
         case 'HOSTED_CREDIT_CARD':
             handler = require('./methods/hosted_checkout');
@@ -26,13 +33,25 @@ function getMethodHandler(paymentMethod) {
             handler = require('./methods/redirect_method');
             paymentProductId = 809;
             break;
-        case 'TRUSTLY':
-            handler = require('./methods/redirect_method');
-            paymentProductId = 806;
-            break;
         case 'PAYPAL':
             handler = require('./methods/redirect_method');
             paymentProductId = 840;
+            break;
+        // added PAY_BY_LINK for testing purposes
+        case 'PAY_BY_LINK':
+            handler = require('./methods/payment_link');
+            break;
+        case 'PAYSAFECARD':
+            handler = require('./methods/redirect_method');
+            paymentProductId = 830;
+            break;
+        case 'SOFORT':
+            handler = require('./methods/redirect_method');
+            paymentProductId = 836;
+            break;
+        case 'TRUSTLY':
+            handler = require('./methods/redirect_method');
+            paymentProductId = 806;
             break;
         default:
             throw new Error('Ingenico payment processor is not configured for paymentMethod ' + paymentMethod + '.');
@@ -49,7 +68,7 @@ function getMethodHandler(paymentMethod) {
  * @param {Object} paymentInformation - the payment information
  * @returns {Object} returns an error object
  */
-function Handle(basket, paymentInformation) {
+function handle(basket, paymentInformation) {
     var collections = require('*/cartridge/scripts/util/collections');
 
     Transaction.wrap(function () {
@@ -92,7 +111,7 @@ function Handle(basket, paymentInformation) {
 *      payment method
 * @return {Object} returns an error object
 */
-function Authorize(orderNumber, paymentInstrument, paymentProcessor) {
+function authorize(orderNumber, paymentInstrument, paymentProcessor) {
     var result = { error: false, fieldErrors: [] };
     var order = OrderMgr.getOrder(orderNumber);
     Transaction.wrap(function () {
@@ -109,7 +128,7 @@ function Authorize(orderNumber, paymentInstrument, paymentProcessor) {
         return result;
     }
     try {
-        handler.methodHandler.authorize(paymentInstrument, order, handler.paymentProductId);
+        handler.methodHandler.authorize(order, paymentInstrument, handler.paymentProductId);
     } catch (e) {
         result.error = true;
         result.payload = e;
@@ -150,8 +169,8 @@ function deleteToken(tokenId) {
     ingenicoHelpers.deleteToken(tokenId);
 }
 
-exports.Handle = Handle;
-exports.Authorize = Authorize;
+exports.Handle = handle;
+exports.Authorize = authorize;
 exports.createToken = createToken;
 exports.getToken = getToken;
 exports.deleteToken = deleteToken;

@@ -3,7 +3,7 @@
     class="payment-form"
     method="POST"
     name="payment-form" ${pdict.paymentForm.attributes}
-    data-session-url="${URLUtils.url('PaymentInstruments-GetClientSession')}">
+    data-session-url="${URLUtils.url('Ingenico-GetClientSession')}">
 
     <!-- Credit Card Type -->
     <input type="hidden" class="form-control" id="cardType" value="" <isprint value="${pdict.paymentForm.cardType.attributes}" encoding="off" /> autocomplete="cc-type">

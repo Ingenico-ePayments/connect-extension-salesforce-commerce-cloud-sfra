@@ -11,7 +11,7 @@
         <!--- data that is needed for client-side encryption --->
         <input type="hidden" name="currencyCode" value="${session.currency}">
         <input type="hidden" name="locale" value="${pdict.locale}">
-        <input type="hidden" name="client-session-url" value="${URLUtils.url('PaymentInstruments-GetClientSession')}">
+        <input type="hidden" name="client-session-url" value="${URLUtils.url('Ingenico-GetClientSession')}">
         <input type="hidden" name="totalAmount" value="${JSON.stringify(pdict.order.priceTotal)}">
 
         <!--- register/authenticated user --->

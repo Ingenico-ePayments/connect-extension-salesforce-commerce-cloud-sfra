@@ -5,7 +5,7 @@ var MaskUtil = require(request.httpHost ? '*/cartridge/scripts/util/MaskUtil' : 
 var System = require('dw/system/System');
 
 /**
- * Creates a ingenico API service
+ * Creates an Ingenico API service
  * @returns {dw.svc.service} returns a REST service
  */
 function createApiService() {

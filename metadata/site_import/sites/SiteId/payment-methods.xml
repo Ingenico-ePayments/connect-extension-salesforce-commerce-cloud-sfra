@@ -7,6 +7,18 @@
         <processor-id>INGENICO</processor-id>
     </payment-method>
 
+    <payment-method method-id="APPLE_PAY">
+        <name xml:lang="x-default">Apple Pay</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>INGENICO</processor-id>
+    </payment-method>
+
+    <payment-method method-id="GOOGLE_PAY">
+        <name xml:lang="x-default">Google Pay</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>INGENICO</processor-id>
+    </payment-method>
+
     <payment-method method-id="IDEAL">
         <name xml:lang="x-default">iDeal</name>
         <enabled-flag>true</enabled-flag>
@@ -16,6 +28,40 @@
         </countries>
         <currencies>
             <currency>EUR</currency>
+        </currencies>
+    </payment-method>
+
+    <payment-method method-id="PAYPAL">
+        <name xml:lang="x-default">PayPal</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>INGENICO</processor-id>
+    </payment-method>
+
+    <payment-method method-id="PAYSAFECARD">
+        <name xml:lang="x-default">Paysafecard</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>INGENICO</processor-id>
+    </payment-method>
+
+    <payment-method method-id="SOFORT">
+        <name xml:lang="x-default">Sofort</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>INGENICO</processor-id>
+        <countries>
+            <country country-code="AT"/>
+            <country country-code="BE"/>
+            <country country-code="DE"/>
+            <country country-code="IT"/>
+            <country country-code="PL"/>
+            <country country-code="SK"/>
+            <country country-code="ES"/>
+            <country country-code="UK"/>
+        </countries>
+        <currencies>
+            <currency>EUR</currency>
+            <currency>PLN</currency>
+            <currency>GBP</currency>
+            <currency>CHF</currency>
         </currencies>
     </payment-method>
 
@@ -52,16 +98,15 @@
         </currencies>
     </payment-method>
 
-    <payment-method method-id="PAYPAL">
-        <name xml:lang="x-default">PayPal</name>
-        <enabled-flag>true</enabled-flag>
-        <processor-id>INGENICO</processor-id>
-    </payment-method>
-
     <payment-method method-id="CREDIT_CARD">
         <name xml:lang="x-default">Credit Card Inline via Ingenico</name>
         <enabled-flag>true</enabled-flag>
         <processor-id>INGENICO</processor-id>
     </payment-method>
 
+    <payment-method method-id="PAY_BY_LINK">
+        <name xml:lang="x-default">Pay By Link</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>INGENICO</processor-id>
+    </payment-method>
 </payment-settings>

@@ -1,5 +1,3 @@
-/* global jQuery $ */
-
 'use strict';
 
 var addressHelpers = require('base/checkout/address');
@@ -12,10 +10,15 @@ var addressHelpers = require('base/checkout/address');
  * @param {requestCallback} callback function that will handle the encrypted customer input
  */
 function createEncryptedCustomerInput(session, cardDetails, paymentDetails, callback) {
+    // remove previous error first
+    $('#card-error').remove();
+
     if (session) {
         session.getIinDetails(cardDetails.cardNumber, paymentDetails).then(function (iinDetailsResponse) {
             if (iinDetailsResponse.status !== 'SUPPORTED') {
-                $('#checkout-main').prepend('<div class="row"><div class="col-sm-7"><div class="alert text-center alert-danger">Your card is not supported. Please use another.</div></div></div>');
+                $('#checkout-main').prepend('<div class="row" id="card-error"><div class="col-sm-7"><div class="alert text-center alert-danger">Your card is not supported. Please use another.</div></div></div>');
+                // enable the next:Place Order button here
+                $('body').trigger('checkout:enableButton', '.next-step-button button');
                 return;
             }
             session.getPaymentProduct(iinDetailsResponse.paymentProductId, paymentDetails).then(function (paymentProduct) {
@@ -28,20 +31,20 @@ function createEncryptedCustomerInput(session, cardDetails, paymentDetails, call
                 paymentRequest.setValue('cvv', cardDetails.cvv);
 
                 if (!paymentRequest.isValid()) {
-                    $('#checkout-main').prepend('<div class="row"><div class="col-sm-7"><div class="alert text-center alert-danger">Please check your card details.</div></div></div>');
+                    $('#checkout-main').prepend('<div class="row" id="card-error"><div class="col-sm-7"><div class="alert text-center alert-danger">Please check your card details.</div></div></div>');
                     // enable the next:Place Order button here
                     $('body').trigger('checkout:enableButton', '.next-step-button button');
                     return;
                 }
                 session.getEncryptor().encrypt(paymentRequest).then(callback);
             }, function () {
-                $('#checkout-main').prepend('<div class="row"><div class="col-sm-7"><div class="alert text-center alert-danger">Please check your card details.</div></div></div>');
+                $('#checkout-main').prepend('<div class="row" id="card-error"><div class="col-sm-7"><div class="alert text-center alert-danger">Please check your card details.</div></div></div>');
                 // enable the next:Place Order button here
                 $('body').trigger('checkout:enableButton', '.next-step-button button');
                 return;
             });
         }, function () {
-            $('#checkout-main').prepend('<div class="row"><div class="col-sm-7"><div class="alert text-center alert-danger">Please check your card details.</div></div></div>');
+            $('#checkout-main').prepend('<div class="row" id="card-error"><div class="col-sm-7"><div class="alert text-center alert-danger">Please check your card details.</div></div></div>');
             // enable the next:Place Order button here
             $('body').trigger('checkout:enableButton', '.next-step-button button');
             return;
@@ -210,20 +213,35 @@ function updatePaymentInformation(order) {
     if (order.billing.payment && order.billing.payment.selectedPaymentInstruments
         && order.billing.payment.selectedPaymentInstruments.length > 0) {
         switch (order.billing.payment.selectedPaymentInstruments[0].paymentMethod) {
+            case 'APPLE_PAY':
+                htmlToAppend += '<span>' + order.resources.paymentTypeApplePay + '</span>';
+                break;
+            case 'CREDIT_CARD':
+                htmlToAppend += '<span>' + order.resources.paymentTypeCreditCard + '</span>';
+                break;
+            case 'GOOGLE_PAY':
+                htmlToAppend += '<span>' + order.resources.paymentTypeGooglePay + '</span>';
+                break;
             case 'HOSTED_CREDIT_CARD':
                 htmlToAppend += '<span>' + order.resources.paymentTypeHostedCreditCard + '</span>';
                 break;
             case 'IDEAL':
                 htmlToAppend += '<span>' + order.resources.paymentTypeIdeal + '</span>';
                 break;
-            case 'TRUSTLY':
-                htmlToAppend += '<span>' + order.resources.paymentTypeTrustly + '</span>';
+            case 'PAY_BY_LINK':
+                htmlToAppend += '<span>' + order.resources.paymentTypeHostedCreditCard + '</span>';
                 break;
             case 'PAYPAL':
                 htmlToAppend += '<span>' + order.resources.paymentTypePayPal + '</span>';
                 break;
-            case 'CREDIT_CARD':
-                htmlToAppend += '<span>' + order.resources.paymentTypeCreditCard + '</span>';
+            case 'PAYSAFECARD':
+                htmlToAppend += '<span>' + order.resources.paymentTypePaysafecard + '</span>';
+                break;
+            case 'SOFORT':
+                htmlToAppend += '<span>' + order.resources.paymentTypeSofort + '</span>';
+                break;
+            case 'TRUSTLY':
+                htmlToAppend += '<span>' + order.resources.paymentTypeTrustly + '</span>';
                 break;
             default:
         }
@@ -323,7 +341,9 @@ module.exports = {
             $('.payment-information').data('payment-method-id', methodID);
         }).on('show.bs.tab', function (e) {
             $(e.target.hash).prop('disabled', false);
-            $(e.relatedTarget.hash).prop('disabled', true);
+            if (e.relatedTarget) {
+                $(e.relatedTarget.hash).prop('disabled', true);
+            }
         });
     },
     createEncryptedCustomerInput: createEncryptedCustomerInput,

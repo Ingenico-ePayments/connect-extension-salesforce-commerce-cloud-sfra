@@ -3,7 +3,7 @@
 
 var formValidation = require('base/components/formValidation');
 var cleave = require('base/components/cleave');
-var ConnectSDK = require('./connectsdk');
+var ConnectSDK = require('../connect/connectsdk');
 
 var url;
 
@@ -30,6 +30,7 @@ function createEncryptedCustomerInput(session, cardDetails, address, customerNum
         paymentRequest.setValue('zip', address.zip);
         session.getEncryptor().encrypt(paymentRequest, true).then(callback);
     }, function () {
+        // eslint-disable-next-line no-console
         console.error('Failed getting IinDetails, check your credentials');
         return;
     });
@@ -139,6 +140,7 @@ module.exports = {
                     });
                 },
                 error: function (err) {
+                    // eslint-disable-next-line no-console
                     console.error(err);
                 }
             });

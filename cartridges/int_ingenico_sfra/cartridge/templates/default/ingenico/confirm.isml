@@ -1,0 +1,12 @@
+<isdecorate template="common/layout/page">
+
+    <form name="confirm" action="${pdict.continueUrl}" method="post">
+        <input type="hidden" name="orderID" value="${pdict.orderID}"/>
+        <input type="hidden" name="orderToken" value="${pdict.orderToken}"/>
+        <input type="hidden" name="message" value="${pdict.message}"/>
+    </form>
+
+    <script type="text/javascript">
+        document.forms.confirm.submit();
+    </script>
+</isdecorate>

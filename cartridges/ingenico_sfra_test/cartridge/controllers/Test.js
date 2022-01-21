@@ -1,11 +1,10 @@
+/* global request */
 'use strict';
 
 var server = require('server');
+
 var CustomObjectMgr = require('dw/object/CustomObjectMgr');
 var Transaction = require('dw/system/Transaction');
-// var page = require('app_storefront_base/cartridge/controller/Test');
-
-// server.extend(page);
 
 var clearCustomObjects = function clearCustomObjects(type) {
     var customObjects = CustomObjectMgr.getAllCustomObjects(type);
@@ -54,6 +53,57 @@ server.get('Notifications', function (req, res, next) {
             transactionId: notification.custom.transactionId
         });
     }
+    res.json(response);
+    return next();
+});
+
+server.get('GetPaymentLink', function (req, res, next) {
+    var OrderMgr = require('dw/order/OrderMgr');
+
+    var orderNumber = request.httpParameterMap.orderNumber;
+    var orderToken = request.httpParameterMap.orderToken;
+
+    var order = OrderMgr.getOrder(orderNumber, orderToken);
+
+    var paymentInstrument = order.getPaymentInstruments().toArray()
+        .filter(function (pi) {
+            return pi.paymentMethod === 'PAY_BY_LINK';
+        })[0];
+
+    var response = {
+        orderNumber: orderNumber,
+        orderToken: orderToken,
+        paymentLink: paymentInstrument.paymentTransaction.custom.ingenicoPayByLinkUrl
+    };
+    res.json(response);
+    return next();
+});
+
+
+server.post('UpdatePayment', function (req, res, next) {
+    var Transaction = require('dw/system/Transaction');
+    var OrderMgr = require('dw/order/OrderMgr');
+
+    var orderNumber = request.httpParameterMap.orderNumber;
+    var orderToken = request.httpParameterMap.orderToken;
+    var paymentStatus = request.httpParameterMap.paymentStatus;
+    var checkoutId = request.httpParameterMap.checkoutId;
+
+    var order = OrderMgr.getOrder(orderNumber, orderToken);
+
+    var paymentInstrument = order.getPaymentInstruments().toArray()
+        .filter(function (pi) {
+            return pi.paymentMethod === 'PAY_BY_LINK';
+        })[0];
+
+    Transaction.wrap(function () {
+        paymentInstrument.paymentTransaction.custom.ingenicoHostedCheckoutId = checkoutId;
+        paymentInstrument.paymentTransaction.custom.ingenicoResult = paymentStatus;
+    });
+
+    var response = {
+        paymentLink: paymentInstrument.paymentTransaction.custom.ingenicoPayByLinkUrl
+    };
     res.json(response);
     return next();
 });

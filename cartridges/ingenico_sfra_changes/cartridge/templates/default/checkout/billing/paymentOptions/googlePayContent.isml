@@ -1,0 +1,26 @@
+<script type="text/javascript" src="https://pay.google.com/gp/p/js/pay.js"></script>
+<isscript>
+    var assets = require('*/cartridge/scripts/assets.js');
+    assets.addJs('/js/googlepay.js');
+</isscript>
+<isset name="billingForm" value="${pdict.forms.billingForm}" scope="page" />
+<fieldset class="tab-pane ${paymentLoop.first ? 'active' : ''} googlepay-content" id="googlepay-content" role="tabpanel" ${paymentLoop.first ? '' : 'disabled'}>
+    <fieldset class="payment-form-fields">
+
+        <input type="hidden" class="form-control"
+                name="${pdict.forms.billingForm.paymentMethod.htmlName}"
+                value="GOOGLE_PAY"
+        >
+
+        <div class="row mb-2">
+            <div class="col-sm-12">
+                <small><em>${Resource.msg('ingenico.googlepay.checkout.message', 'ingenico', null)}</em></small>
+            </div>
+        </div>
+
+        <div id="google-pay-button" data-from-checkout="true"></div>
+        <isset name="googlePayData" value="${require('*/cartridge/scripts/checkout/ingenicoCheckoutHelper').getIngenicoCheckoutData('GOOGLE_PAY')}" scope="page" />
+        <input type="hidden" id="ingenico_googlepay_data" value="${JSON.stringify(googlePayData)}">
+
+    </fieldset>
+</fieldset>

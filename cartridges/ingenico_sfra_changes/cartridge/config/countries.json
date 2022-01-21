@@ -19,4 +19,7 @@
 },{
     "id": "nl_NL",
     "currencyCode": "EUR"
+},{
+    "id": "de_DE",
+    "currencyCode": "EUR"
 }]

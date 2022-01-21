@@ -7,7 +7,8 @@
             <development>
                 <preference preference-id="ingenicoApiService">IngenicoPayment</preference>
                 <preference preference-id="ingenicoVariantId"></preference>
-                <preference preference-id="ingenicoRequiresApproval">false</preference>
+                <preference preference-id="ingenicoRedirectRequiresApproval">false</preference>
+                <preference preference-id="ingenicoRequiresCardApproval">false</preference>
             </development>
             <staging/>
             <production/>

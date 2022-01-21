@@ -1,17 +1,29 @@
 <isloop items="${pdict.order.billing.payment.applicablePaymentMethods}" var="paymentOption" status="paymentLoop">
-    <isif condition="${paymentOption.ID === 'HOSTED_CREDIT_CARD'}">
-        <isinclude template="checkout/billing/paymentOptions/hostedCheckoutTab" />
+    <isif condition="${paymentOption.ID === 'APPLE_PAY'}">
+        <isinclude template="checkout/billing/paymentOptions/applePayTab" />
     </isif>
     <isif condition="${paymentOption.ID === 'CREDIT_CARD'}">
         <isinclude template="checkout/billing/paymentOptions/creditCardTab" />
     </isif>
+    <isif condition="${paymentOption.ID === 'GOOGLE_PAY'}">
+        <isinclude template="checkout/billing/paymentOptions/googlePayTab" />
+    </isif>
+    <isif condition="${paymentOption.ID === 'HOSTED_CREDIT_CARD'}">
+        <isinclude template="checkout/billing/paymentOptions/hostedCheckoutTab" />
+    </isif>
     <isif condition="${paymentOption.ID === 'IDEAL'}">
         <isinclude template="checkout/billing/paymentOptions/idealTab" />
     </isif>
-    <isif condition="${paymentOption.ID === 'TRUSTLY'}">
-        <isinclude template="checkout/billing/paymentOptions/trustlyTab" />
-    </isif>
     <isif condition="${paymentOption.ID === 'PAYPAL'}">
         <isinclude template="checkout/billing/paymentOptions/paypalTab" />
+    </isif>
+    <isif condition="${paymentOption.ID === 'PAYSAFECARD'}">
+        <isinclude template="checkout/billing/paymentOptions/paysafecardTab" />
+    </isif>
+    <isif condition="${paymentOption.ID === 'SOFORT'}">
+        <isinclude template="checkout/billing/paymentOptions/sofortTab" />
+    </isif>
+    <isif condition="${paymentOption.ID === 'TRUSTLY'}">
+        <isinclude template="checkout/billing/paymentOptions/trustlyTab" />
     </isif>
 </isloop>

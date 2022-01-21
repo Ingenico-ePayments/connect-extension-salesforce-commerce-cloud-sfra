@@ -1,0 +1,16 @@
+<isset name="billingForm" value="${pdict.forms.billingForm}" scope="page" />
+<fieldset class="tab-pane ${paymentLoop.first ? 'active' : ''} paysafecard-content" id="paysafecard-content" role="tabpanel" ${paymentLoop.first ? '' : 'disabled'}>
+    <fieldset class="payment-form-fields">
+
+        <input type="hidden" class="form-control"
+                name="${pdict.forms.billingForm.paymentMethod.htmlName}"
+                value="PAYSAFECARD"
+        >
+
+        <div class="row mb-2">
+            <div class="col-sm-12">
+                <small><em>${Resource.msg('ingenico.redirect.redirectMessage', 'ingenico', null)}</em></small>
+            </div>
+        </div>
+    </fieldset>
+</fieldset>

@@ -28,6 +28,7 @@
         <options>
             <option optionid="US" label="select.option.country.unitedstates" value="US"/>
             <option optionid="NL" label="select.option.country.netherlands" value="NL"/>
+            <option optionid="DE" label="select.option.country.germany" value="DE"/>
         </options>
     </field>
 

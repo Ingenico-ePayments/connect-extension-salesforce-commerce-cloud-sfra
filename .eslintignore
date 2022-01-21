@@ -1,2 +1,4 @@
 cartridges/ingenico_sfra_changes/cartridge/static/
 package/
+cartridges/ingenico_sfra_changes/cartridge/client/default/js/connect/connectsdk.js
+gulpfile.js

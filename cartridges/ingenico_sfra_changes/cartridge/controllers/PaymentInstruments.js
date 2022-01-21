@@ -67,12 +67,6 @@ server.append(
     }
 );
 
-server.get('GetClientSession', function (req, res, next) {
-    var ingenicoHelpers = require('*/cartridge/scripts/ingenicoHelpers');
-    res.json(ingenicoHelpers.createClientSession());
-    return next();
-});
-
 server.append('SavePayment', csrfProtection.validateAjaxRequest, function (req, res, next) {
     var HookMgr = require('dw/system/HookMgr');
     var PaymentMgr = require('dw/order/PaymentMgr');

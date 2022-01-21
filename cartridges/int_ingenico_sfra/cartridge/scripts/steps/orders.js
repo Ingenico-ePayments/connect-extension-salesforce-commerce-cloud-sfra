@@ -18,10 +18,7 @@ function failOrderIfExpired(order) {
     var creationDateUTC = new Date(order.creationDate.toUTCString()).valueOf();
 
     if (creationDateUTC <= expiryDate) {
-        var paymentInstruments = order.getPaymentInstruments();
-        var iterator = paymentInstruments.iterator();
-        while (iterator.hasNext()) {
-            var paymentInstrument = iterator.next();
+        for (let paymentInstrument of order.getPaymentInstruments().toArray()) {
             if (paymentInstrument.paymentTransaction.paymentProcessor.getID() === 'INGENICO' && paymentInstrument.paymentTransaction.custom.ingenicoHostedCheckoutId) {
                 var checkoutStatus = ingenicoHelpers.getHostedCheckoutStatus(paymentInstrument.paymentTransaction.custom.ingenicoHostedCheckoutId);
                 if (checkoutStatus.errorId && checkoutStatus.errors[0].httpStatusCode === 404) {

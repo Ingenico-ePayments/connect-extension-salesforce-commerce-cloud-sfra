@@ -1,6 +1,5 @@
 var forge = require('node-forge');
 
-// # sourceMappingURL=forge.min.js.map
 (function (global) {
     var connectsdk = {},
         modules = {};
@@ -45,30 +44,30 @@ define('connectsdk.core', [], function () {
 
 define('connectsdk.promise', ['connectsdk.core'], function (turing) {
     function PromiseModule(global) {
-		/**
-		 * The Promise class.
-		 */
+        /**
+         * The Promise class.
+         */
         function Promise(singleton) {
             var self = this;
             this.pending = [];
 
-			/**
-			 * Resolves a promise.
-			 *
-			 * @param {Object} A value
-			 */
+            /**
+             * Resolves a promise.
+             *
+             * @param {Object} A value
+             */
             this.resolve = function (result) {
                 self.complete('resolve', result);
             },
 
-			/**
-			 * Rejects a promise.
-			 *
-			 * @param {Object} A value
-			 */
-			this.reject = function (result) {
-    self.complete('reject', result);
-};
+                /**
+                 * Rejects a promise.
+                 *
+                 * @param {Object} A value
+                 */
+                this.reject = function (result) {
+                    self.complete('reject', result);
+                };
 
             if (singleton) {
                 this.isSingleton = true;
@@ -76,13 +75,13 @@ define('connectsdk.promise', ['connectsdk.core'], function (turing) {
         }
 
         Promise.prototype = {
-			/**
-			 * Adds a success and failure handler for completion of this Promise object.
-			 *
-			 * @param {Function} success The success handler
-			 * @param {Function} success The failure handler
-			 * @returns {Promise} `this`
-			 */
+            /**
+             * Adds a success and failure handler for completion of this Promise object.
+             *
+             * @param {Function} success The success handler
+             * @param {Function} success The failure handler
+             * @returns {Promise} `this`
+             */
             then: function (success, failure) {
                 this.pending.push({
                     resolve: success,
@@ -91,12 +90,12 @@ define('connectsdk.promise', ['connectsdk.core'], function (turing) {
                 return this;
             },
 
-			/**
-			 * Runs through each pending 'thenable' based on type (resolve, reject).
-			 *
-			 * @param {String} type The thenable type
-			 * @param {Object} result A value
-			 */
+            /**
+             * Runs through each pending 'thenable' based on type (resolve, reject).
+             *
+             * @param {String} type The thenable type
+             * @param {Object} result A value
+             */
             complete: function (type, result) {
                 while (this.pending[0]) {
                     this.pending.shift()[type](result);
@@ -114,26 +113,26 @@ define('connectsdk.promise', ['connectsdk.core'], function (turing) {
 define('connectsdk.net', ['connectsdk.core'], function (connectsdk) {
     var net = {};
 
-  /**
-    * Ajax request options:
-    *
-    *   - `method`: {String} HTTP method - GET, POST, etc.
-    *   - `success`: {Function} A callback to run when a request is successful
-    *   - `error`: {Function} A callback to run when the request fails
-    *   - `asynchronous`: {Boolean} Defaults to asynchronous
-    *   - `postBody`: {String} The HTTP POST body
-    *   - `contentType`: {String} The content type of the request, default is `application/x-www-form-urlencoded`
-    *
-    */
+    /**
+     * Ajax request options:
+     *
+     *   - `method`: {String} HTTP method - GET, POST, etc.
+     *   - `success`: {Function} A callback to run when a request is successful
+     *   - `error`: {Function} A callback to run when the request fails
+     *   - `asynchronous`: {Boolean} Defaults to asynchronous
+     *   - `postBody`: {String} The HTTP POST body
+     *   - `contentType`: {String} The content type of the request, default is `application/x-www-form-urlencoded`
+     *
+     */
 
-  /**
-    * Removes leading and trailing whitespace.
-    * @param {String}
-    * @return {String}
-    */
+    /**
+     * Removes leading and trailing whitespace.
+     * @param {String}
+     * @return {String}
+     */
     var trim = ''.trim
-    ? function (s) { return s.trim(); }
-    : function (s) { return s.replace(/^\s\s*/, '').replace(/\s\s*$/, ''); };
+        ? function (s) { return s.trim(); }
+        : function (s) { return s.replace(/^\s\s*/, '').replace(/\s\s*$/, ''); };
 
     function xhr() {
         if (typeof XMLHttpRequest !== 'undefined' && (window.location.protocol !== 'file:' || !window.ActiveXObject)) {
@@ -154,16 +153,16 @@ define('connectsdk.net', ['connectsdk.core'], function (connectsdk) {
 
     function successfulRequest(request) {
         return (request.status >= 200 && request.status < 300) ||
-        request.status == 304 ||
-        (request.status == 0 && request.responseText);
+            request.status == 304 ||
+            (request.status == 0 && request.responseText);
     }
 
-  /**
-    * Serialize JavaScript for HTTP requests.
-    *
-    * @param {Object} object An Array or Object
-    * @returns {String} A string suitable for a GET or POST request
-    */
+    /**
+     * Serialize JavaScript for HTTP requests.
+     *
+     * @param {Object} object An Array or Object
+     * @returns {String} A string suitable for a GET or POST request
+     */
     net.serialize = function (object) {
         if (!object) return;
 
@@ -178,36 +177,36 @@ define('connectsdk.net', ['connectsdk.core'], function (connectsdk) {
         return results.join('&');
     };
 
-  /**
-    * JSON.parse support can be inferred using `connectsdk.detect('JSON.parse')`.
-    */
-  // connectsdk.addDetectionTest('JSON.parse', function() {
-  //  return window.JSON && window.JSON.parse;
-  // });
+    /**
+     * JSON.parse support can be inferred using `connectsdk.detect('JSON.parse')`.
+     */
+    // connectsdk.addDetectionTest('JSON.parse', function() {
+    //  return window.JSON && window.JSON.parse;
+    // });
 
-  /**
-    * Parses JSON represented as a string.
-    *
-    * @param {String} string The original string
-    * @returns {Object} A JavaScript object
-    */
+    /**
+     * Parses JSON represented as a string.
+     *
+     * @param {String} string The original string
+     * @returns {Object} A JavaScript object
+     */
     net.parseJSON = function (string) {
         if (typeof string !== 'string' || !string) return null;
         string = trim(string);
-    /*
-    return connectsdk.detect('JSON.parse') ?
-      window.JSON.parse(string) :
-      (new Function('return ' + string))();
-    */
+        /*
+        return connectsdk.detect('JSON.parse') ?
+          window.JSON.parse(string) :
+          (new Function('return ' + string))();
+        */
         return window.JSON.parse(string);
     };
 
-  /**
-    * Parses XML represented as a string.
-    *
-    * @param {String} string The original string
-    * @returns {Object} A JavaScript object
-    */
+    /**
+     * Parses XML represented as a string.
+     *
+     * @param {String} string The original string
+     * @returns {Object} A JavaScript object
+     */
     if (window.DOMParser) {
         net.parseXML = function (text) {
             return new DOMParser().parseFromString(text, 'text/xml');
@@ -221,33 +220,33 @@ define('connectsdk.net', ['connectsdk.core'], function (connectsdk) {
         };
     }
 
-  /**
-    * Creates an Ajax request.  Returns an object that can be used
-    * to chain calls.  For example:
-    *
-    *      $t.post('/post-test')
-    *        .data({ key: 'value' })
-    *        .end(function(res) {
-    *          assert.equal('value', res.responseText);
-    *        });
-    *
-    *      $t.get('/get-test')
-    *        .set('Accept', 'text/html')
-    *        .end(function(res) {
-    *          assert.equal('Sample text', res.responseText);
-    *        });
-    *
-    * The available chained methods are:
-    *
-    * `set` -- set a HTTP header
-    * `data` -- the postBody
-    * `end` -- send the request over the network, and calls your callback with a `res` object
-    * `send` -- sends the request and calls `data`: `.send({ data: value }, function(res) { });`
-    *
-    * @param {String} The URL to call
-    * @param {Object} Optional settings
-    * @returns {Object} A chainable object for further configuration
-    */
+    /**
+     * Creates an Ajax request.  Returns an object that can be used
+     * to chain calls.  For example:
+     *
+     *      $t.post('/post-test')
+     *        .data({ key: 'value' })
+     *        .end(function(res) {
+     *          assert.equal('value', res.responseText);
+     *        });
+     *
+     *      $t.get('/get-test')
+     *        .set('Accept', 'text/html')
+     *        .end(function(res) {
+     *          assert.equal('Sample text', res.responseText);
+     *        });
+     *
+     * The available chained methods are:
+     *
+     * `set` -- set a HTTP header
+     * `data` -- the postBody
+     * `end` -- send the request over the network, and calls your callback with a `res` object
+     * `send` -- sends the request and calls `data`: `.send({ data: value }, function(res) { });`
+     *
+     * @param {String} The URL to call
+     * @param {Object} Optional settings
+     * @returns {Object} A chainable object for further configuration
+     */
     function ajax(url, options) {
         var request = xhr(),
             promise,
@@ -268,7 +267,7 @@ define('connectsdk.net', ['connectsdk.core'], function (connectsdk) {
                     response.responseJSON = net.parseJSON(request.responseText);
                 } else if (/xml/.test(contentType)) {
                     response.responseXML = net.parseXML(request.responseText);
-      	}
+                }
 
                 response.success = successfulRequest(request);
 
@@ -286,16 +285,16 @@ define('connectsdk.net', ['connectsdk.core'], function (connectsdk) {
             }
         }
 
-    // Set the HTTP headers
+        // Set the HTTP headers
         function setHeaders() {
             var defaults = {
                 Accept: 'text/javascript, application/json, text/html, application/xml, text/xml, */*',
                 'Content-Type': 'application/json'
             };
 
-      /**
-       * Merge headers with defaults.
-       */
+            /**
+             * Merge headers with defaults.
+             */
             for (var name in defaults) {
                 if (!options.headers.hasOwnProperty(name)) { options.headers[name] = defaults[name]; }
             }
@@ -318,15 +317,15 @@ define('connectsdk.net', ['connectsdk.core'], function (connectsdk) {
         }
 
         if (typeof options.postBody !== 'string') {
-      // Serialize JavaScript
+            // Serialize JavaScript
             options.postBody = net.serialize(options.postBody);
         }
 
-    // setHeaders();
+        // setHeaders();
 
         function send() {
             try {
-      	setHeaders();
+                setHeaders();
                 request.send(options.postBody);
             } catch (e) {
                 if (options.error) {
@@ -390,7 +389,7 @@ define('connectsdk.net', ['connectsdk.core'], function (connectsdk) {
         this.scriptTag.src = this.url.replace('{callback}', this.methodName);
         var that = this;
         this.scriptTag.onerror = function () {
-    	that.failure();
+            that.failure();
         };
         document.body.appendChild(this.scriptTag);
     };
@@ -398,79 +397,79 @@ define('connectsdk.net', ['connectsdk.core'], function (connectsdk) {
     JSONPCallback.prototype.teardown = function () {
         window[this.methodName] = null;
         try {
-    	delete window[this.methodName];
+            delete window[this.methodName];
         } catch (e) {}
         if (this.scriptTag) {
             document.body.removeChild(this.scriptTag);
         }
     };
 
-  /**
-   * An Ajax GET request.
-   *
-   *      $t.get('/get-test')
-   *        .set('Accept', 'text/html')
-   *        .end(function(res) {
-   *          assert.equal('Sample text', res.responseText);
-   *        });
-   *
-   * @param {String} url The URL to request
-   * @param {Object} options The Ajax request options
-   * @returns {Object} A chainable object for further configuration
-   */
+    /**
+     * An Ajax GET request.
+     *
+     *      $t.get('/get-test')
+     *        .set('Accept', 'text/html')
+     *        .end(function(res) {
+     *          assert.equal('Sample text', res.responseText);
+     *        });
+     *
+     * @param {String} url The URL to request
+     * @param {Object} options The Ajax request options
+     * @returns {Object} A chainable object for further configuration
+     */
     net.get = function (url, options) {
         if (typeof options === 'undefined') options = {};
         options.method = 'get';
         return ajax(url, options);
     };
 
-  /**
-   * An Ajax POST request.
-   *
-   *      $t.post('/post-test')
-   *        .data({ key: 'value' })
-   *        .end(function(res) {
-   *          assert.equal('value', res.responseText);
-   *        });
-   *
-   * @param {String} url The URL to request
-   * @param {Object} options The Ajax request options (`postBody` may come in handy here)
-   * @returns {Object} An object for further chaining with promises
-   */
+    /**
+     * An Ajax POST request.
+     *
+     *      $t.post('/post-test')
+     *        .data({ key: 'value' })
+     *        .end(function(res) {
+     *          assert.equal('value', res.responseText);
+     *        });
+     *
+     * @param {String} url The URL to request
+     * @param {Object} options The Ajax request options (`postBody` may come in handy here)
+     * @returns {Object} An object for further chaining with promises
+     */
     net.post = function (url, options) {
         if (typeof options === 'undefined') options = {};
         options.method = 'post';
         return ajax(url, options);
     };
 
-  /**
-   * A jsonp request.  Example:
-   *
-   *     var url = 'http://feeds.delicious.com/v1/json/';
-   *     url += 'alex_young/javascript?callback={callback}';
-   *
-   *     connectsdk.net.jsonp(url, {
-   *       success: function(json) {
-   *         console.log(json);
-   *       }
-   *     });
-   *
-   * @param {String} url The URL to request
-   */
+    /**
+     * A jsonp request.  Example:
+     *
+     *     var url = 'http://feeds.delicious.com/v1/json/';
+     *     url += 'alex_young/javascript?callback={callback}';
+     *
+     *     connectsdk.net.jsonp(url, {
+     *       success: function(json) {
+     *         console.log(json);
+     *       }
+     *     });
+     *
+     * @param {String} url The URL to request
+     */
     net.jsonp = function (url, options) {
         if (typeof options === 'undefined') options = {};
         var callback = new JSONPCallback(url, options.success, options.failure);
         callback.run();
     };
 
-  /**
-    * The Ajax methods are mapped to the `connectsdk` object:
-    *
-    *      connectsdk.get();
-    *      connectsdk.post();
-    *      connectsdk.json();
-    *
-    */
+    /**
+     * The Ajax methods are mapped to the `connectsdk` object:
+     *
+     *      connectsdk.get();
+     *      connectsdk.post();
+     *      connectsdk.json();
+     *
+     */
     connectsdk.get = net.get;
     connectsdk.post = net.post;
     connectsdk.jsonp = net.jsonp;
@@ -481,12 +480,12 @@ define('connectsdk.net', ['connectsdk.core'], function (connectsdk) {
 });
 
 define('connectsdk.Util', ['connectsdk.core'], function (connectsdk) {
-	// Create a singleton from Util so the same util function can be used in different modules
+    // Create a singleton from Util so the same util function can be used in different modules
     var Util = (function () {
         var instance;
 
         function createInstance() {
-			// private variables to use in the public methods
+            // private variables to use in the public methods
             var applePayPaymentProductId = 302;
             var googlePayPaymentProductId = 320;
             var bancontactPaymentProductId = 3012;
@@ -499,7 +498,7 @@ define('connectsdk.Util', ['connectsdk.core'], function (connectsdk) {
                     return {
                         screenSize: window.innerWidth + 'x' + window.innerHeight,
                         platformIdentifier: window.navigator.userAgent,
-                        sdkIdentifier: ((document.GC && document.GC.rppEnabledPage) ? 'rpp-' : '') + 'JavaScriptClientSDK/v3.18.1',
+                        sdkIdentifier: ((document.GC && document.GC.rppEnabledPage) ? 'rpp-' : '') + 'JavaScriptClientSDK/v3.20.0',
                         sdkCreator: 'Ingenico'
                     };
                 },
@@ -557,7 +556,7 @@ define('connectsdk.Util', ['connectsdk.core'], function (connectsdk) {
                         h3 = bits >> 6 & 0x3f;
                         h4 = bits & 0x3f;
 
-						// use hexets to index into b64, and append result to encoded string
+                        // use hexets to index into b64, and append result to encoded string
                         tmp_arr[ac++] = b64.charAt(h1) + b64.charAt(h2) + b64.charAt(h3) + b64.charAt(h4);
                     } while (i < data.length);
 
@@ -711,7 +710,7 @@ define('connectsdk.GooglePay', ['connectsdk.core', 'connectsdk.promise', 'connec
                 _gateway = googlePayData.gateway;
                 _networks = googlePayData.networks;
             } else {
-                _gateway = 'ingenicoglobalcollect';
+                _gateway = 'globalcollect';
                 _networks = googlePayData;
             }
             var promise = new Promise();
@@ -771,9 +770,15 @@ define('connectsdk.ApplePay', ['connectsdk.core', 'connectsdk.promise', 'connect
             var _context = context;
             var _C2SCommunicator = C2SCommunicator;
 
+            var _countryCode;
+            if (_context.acquirerCountry) {
+                _countryCode = _context.acquirerCountry;
+            } else {
+                _countryCode = _context.countryCode;
+            }
             var payment = {
                 currencyCode: _context.currency,
-                countryCode: _context.countryCode,
+                countryCode: _countryCode,
                 total: {
                     label: _context.displayName,
                     amount: _context.totalAmount / 100
@@ -884,8 +889,7 @@ define('connectsdk.C2SCommunicatorConfiguration', ['connectsdk.core'], function 
                     API: 'https://par.sandbox.api-ingenico.com/client/v1',
                     ASSETS: 'https://assets.pay4.sandbox.secured-by-ingenico.com'
                 }
-            },
-            // Non public settings. Only needed in GC development environment. Do not use
+            },            // Non public settings. Only needed in GC development environment. Do not use
             // these, they will not work outside GC.
 
             INTEGRATION: {
@@ -1040,8 +1044,8 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
 
         var formatImageUrl = function (url, imageUrl) {
             url = formatUrl(url);
-			// _cleanJSON can be called multiple times with the same data (which is cached between calls).
-			// Don't prepend the url after the first time.
+            // _cleanJSON can be called multiple times with the same data (which is cached between calls).
+            // Don't prepend the url after the first time.
             if (startsWith(imageUrl, url)) {
                 return imageUrl;
             }
@@ -1061,7 +1065,7 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
                 var field = json.fields[i];
                 field.type = (field.displayHints && field.displayHints.obfuscate) ? 'password' : _mapType[field.type];
 
-				// helper code for templating tools like Handlebars
+                // helper code for templating tools like Handlebars
                 for (validatorKey in field.dataRestrictions.validators) {
                     field.validators = field.validators || [];
                     field.validators.push(validatorKey);
@@ -1070,19 +1074,19 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
                     field.displayHints.formElement.list = true;
                 }
 
-				// full image paths
+                // full image paths
                 if (field.displayHints && field.displayHints.tooltip && field.displayHints.tooltip.image) {
                     field.displayHints.tooltip.image = formatImageUrl(url, field.displayHints.tooltip.image);
                 }
             }
-			// The server orders in a different way, so we apply the sortorder
+            // The server orders in a different way, so we apply the sortorder
             json.fields.sort(function (a, b) {
                 if (a.displayHints.displayOrder < b.displayHints.displayOrder) {
                     return -1;
                 }
                 return 1;
             });
-			// set full image path
+            // set full image path
             json.displayHints.logo = formatImageUrl(url, json.displayHints.logo);
             return json;
         };
@@ -1137,9 +1141,9 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
             var cacheKeyLocale = context.locale ? context.locale + '_' : '';
             paymentProductSpecificInputs = paymentProductSpecificInputs || {};
             var promise = new Promise(),
-				 cacheBust = new Date().getTime(),
-				 cacheKey = 'getPaymentProducts-' + context.totalAmount + '_' + context.countryCode + '_'
-					+ cacheKeyLocale + context.isRecurring + '_' + context.currency + '_' + JSON.stringify(paymentProductSpecificInputs);
+                cacheBust = new Date().getTime(),
+                cacheKey = 'getPaymentProducts-' + context.totalAmount + '_' + context.countryCode + '_'
+                + cacheKeyLocale + context.isRecurring + '_' + context.currency + '_' + JSON.stringify(paymentProductSpecificInputs);
 
             if (_cache[cacheKey]) {
                 setTimeout(function () {
@@ -1148,32 +1152,32 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
             } else {
                 var urlParameterLocale = context.locale ? '&locale=' + context.locale : '';
                 Net.get(formatUrl(_c2SCommunicatorConfiguration.clientApiUrl) + _c2SCommunicatorConfiguration.customerId
-					+ '/products' + '?countryCode=' + context.countryCode + '&isRecurring=' + context.isRecurring
-					+ '&amount=' + context.totalAmount + '&currencyCode=' + context.currency
-					+ '&hide=fields' + urlParameterLocale + '&cacheBust=' + cacheBust)
-					.set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
-					.set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
-					.end(function (res) {
-    if (res.success) {
-        var json = _extendLogoUrl(res.responseJSON, _c2SCommunicatorConfiguration.assetUrl, 's');
-        if (_isPaymentProductInList(json.paymentProducts, _util.applePayPaymentProductId)) {
-            _ApplePay.isApplePayAvailable();
-        }
-        if (_isPaymentProductInList(json.paymentProducts, _util.googlePayPaymentProductId)
-								&& _GooglePay.isMerchantIdProvided(paymentProductSpecificInputs)) {
-            var googlePayData = _getGooglePayData(json.paymentProducts, _util.googlePayPaymentProductId);
-            _GooglePay.isGooglePayAvailable(context, paymentProductSpecificInputs, googlePayData).then(function () {
-                resolveGetBasicPaymentProducts(json, promise, cacheKey);
-            }, function () {
-                resolveGetBasicPaymentProducts(json, promise, cacheKey);
-            });
-        } else {
-            resolveGetBasicPaymentProducts(json, promise, cacheKey);
-        }
-    } else {
-        promise.reject('failed to retrieve Basic Payment Products', res);
-    }
-});
+                    + '/products' + '?countryCode=' + context.countryCode + '&isRecurring=' + context.isRecurring
+                    + '&amount=' + context.totalAmount + '&currencyCode=' + context.currency
+                    + '&hide=fields' + urlParameterLocale + '&cacheBust=' + cacheBust)
+                    .set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
+                    .set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
+                    .end(function (res) {
+                        if (res.success) {
+                            var json = _extendLogoUrl(res.responseJSON, _c2SCommunicatorConfiguration.assetUrl, 's');
+                            if (_isPaymentProductInList(json.paymentProducts, _util.applePayPaymentProductId)) {
+                                _ApplePay.isApplePayAvailable();
+                            }
+                            if (_isPaymentProductInList(json.paymentProducts, _util.googlePayPaymentProductId)
+                                && _GooglePay.isMerchantIdProvided(paymentProductSpecificInputs)) {
+                                var googlePayData = _getGooglePayData(json.paymentProducts, _util.googlePayPaymentProductId);
+                                _GooglePay.isGooglePayAvailable(context, paymentProductSpecificInputs, googlePayData).then(function () {
+                                    resolveGetBasicPaymentProducts(json, promise, cacheKey);
+                                }, function () {
+                                    resolveGetBasicPaymentProducts(json, promise, cacheKey);
+                                });
+                            } else {
+                                resolveGetBasicPaymentProducts(json, promise, cacheKey);
+                            }
+                        } else {
+                            promise.reject('failed to retrieve Basic Payment Products', res);
+                        }
+                    });
             }
             return promise;
         };
@@ -1181,9 +1185,9 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
         this.getBasicPaymentProductGroups = function (context) {
             var cacheKeyLocale = context.locale ? context.locale + '_' : '';
             var promise = new Promise(),
-				 cacheBust = new Date().getTime(),
-				 cacheKey = 'getPaymentProductGroups-' + context.totalAmount + '_' + context.countryCode + '_'
-					+ cacheKeyLocale + context.isRecurring + '_' + context.currency;
+                cacheBust = new Date().getTime(),
+                cacheKey = 'getPaymentProductGroups-' + context.totalAmount + '_' + context.countryCode + '_'
+                + cacheKeyLocale + context.isRecurring + '_' + context.currency;
 
             if (_cache[cacheKey]) {
                 setTimeout(function () {
@@ -1192,20 +1196,20 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
             } else {
                 var urlParameterLocale = context.locale ? '&locale=' + context.locale : '';
                 Net.get(formatUrl(_c2SCommunicatorConfiguration.clientApiUrl) + _c2SCommunicatorConfiguration.customerId
-					+ '/productgroups' + '?countryCode=' + context.countryCode + '&isRecurring=' + context.isRecurring
-					+ '&amount=' + context.totalAmount + '&currencyCode=' + context.currency
-					+ '&hide=fields' + urlParameterLocale + '&cacheBust=' + cacheBust)
-					.set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
-					.set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
-					.end(function (res) {
-    if (res.success) {
-        var json = _extendLogoUrl(res.responseJSON, _c2SCommunicatorConfiguration.assetUrl, 'Groups');
-        _cache[cacheKey] = json;
-        promise.resolve(json);
-    } else {
-        promise.reject(res.responseJSON);
-    }
-});
+                    + '/productgroups' + '?countryCode=' + context.countryCode + '&isRecurring=' + context.isRecurring
+                    + '&amount=' + context.totalAmount + '&currencyCode=' + context.currency
+                    + '&hide=fields' + urlParameterLocale + '&cacheBust=' + cacheBust)
+                    .set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
+                    .set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
+                    .end(function (res) {
+                        if (res.success) {
+                            var json = _extendLogoUrl(res.responseJSON, _c2SCommunicatorConfiguration.assetUrl, 'Groups');
+                            _cache[cacheKey] = json;
+                            promise.resolve(json);
+                        } else {
+                            promise.reject(res.responseJSON);
+                        }
+                    });
             }
             return promise;
         };
@@ -1214,10 +1218,10 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
             paymentProductSpecificInputs = paymentProductSpecificInputs || {};
             var cacheKeyLocale = context.locale ? context.locale + '_' : '';
             var promise = new Promise(),
-				 cacheBust = new Date().getTime(),
-				 cacheKey = 'getPaymentProduct-' + paymentProductId + '_' + context.totalAmount + '_'
-					+ context.countryCode + '_' + cacheKeyLocale + context.isRecurring + '_'
-					+ context.currency + '_' + JSON.stringify(paymentProductSpecificInputs);
+                cacheBust = new Date().getTime(),
+                cacheKey = 'getPaymentProduct-' + paymentProductId + '_' + context.totalAmount + '_'
+                + context.countryCode + '_' + cacheKeyLocale + context.isRecurring + '_'
+                + context.currency + '_' + JSON.stringify(paymentProductSpecificInputs);
             if (_util.paymentProductsThatAreNotSupportedInThisBrowser.indexOf(paymentProductId) > -1) {
                 setTimeout(function () {
                     promise.reject({
@@ -1244,51 +1248,51 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
             } else {
                 var urlParameterlocale = context.locale ? '&locale=' + context.locale : '';
                 var getPaymentProductUrl = formatUrl(_c2SCommunicatorConfiguration.clientApiUrl) + _c2SCommunicatorConfiguration.customerId
-						+ '/products/' + paymentProductId + '?countryCode=' + context.countryCode
-						+ '&isRecurring=' + context.isRecurring + '&amount=' + context.totalAmount
-						+ '&currencyCode=' + context.currency + urlParameterlocale;
+                        + '/products/' + paymentProductId + '?countryCode=' + context.countryCode
+                        + '&isRecurring=' + context.isRecurring + '&amount=' + context.totalAmount
+                        + '&currencyCode=' + context.currency + urlParameterlocale;
 
                 if ((paymentProductId === _util.bancontactPaymentProductId) &&
-						paymentProductSpecificInputs &&
-						paymentProductSpecificInputs.bancontact &&
-						paymentProductSpecificInputs.bancontact.forceBasicFlow) {
-						// Add query parameter to products call to force basic flow for bancontact
+                        paymentProductSpecificInputs &&
+                        paymentProductSpecificInputs.bancontact &&
+                        paymentProductSpecificInputs.bancontact.forceBasicFlow) {
+                        // Add query parameter to products call to force basic flow for bancontact
                     getPaymentProductUrl += '&forceBasicFlow=' + paymentProductSpecificInputs.bancontact.forceBasicFlow;
                 }
 
                 getPaymentProductUrl += '&cacheBust=' + cacheBust;
 
                 Net.get(getPaymentProductUrl)
-						.set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
-						.set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
-						.end(function (res) {
-    if (res.success) {
-        var cleanedJSON = _cleanJSON(res.responseJSON, c2SCommunicatorConfiguration.assetUrl);
-        _cache[cacheKey] = cleanedJSON;
-        if (paymentProductId === _util.applePayPaymentProductId && !_ApplePay.isApplePayAvailable()) {
-									// ApplePay is available in the payment context but the client does not support it.
-            promise.reject(cleanedJSON);
-        } else if (paymentProductId === _util.googlePayPaymentProductId
-									&& _GooglePay.isMerchantIdProvided(paymentProductSpecificInputs)) {
-            var networks = cleanedJSON.paymentProduct320SpecificData.networks;
-            _GooglePay.isGooglePayAvailable(context, paymentProductSpecificInputs, networks).then(function (isGooglePayAvailable) {
-                if (isGooglePayAvailable) {
-                    promise.resolve(cleanedJSON);
-                } else {
-											// _isGooglePayAvailable returned false so google pay is not available, so reject getPaymentProduct
-                    promise.reject(cleanedJSON);
-                }
-            }, function () {
-										// _isGooglePayAvailable rejected so not available
-                promise.reject(cleanedJSON);
-            });
-        } else {
-            promise.resolve(cleanedJSON);
-        }
-    } else {
-        promise.reject('failed to retrieve Payment Product', res);
-    }
-});
+                        .set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
+                        .set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
+                        .end(function (res) {
+                            if (res.success) {
+                                var cleanedJSON = _cleanJSON(res.responseJSON, c2SCommunicatorConfiguration.assetUrl);
+                                _cache[cacheKey] = cleanedJSON;
+                                if (paymentProductId === _util.applePayPaymentProductId && !_ApplePay.isApplePayAvailable()) {
+                                    // ApplePay is available in the payment context but the client does not support it.
+                                    promise.reject(cleanedJSON);
+                                } else if (paymentProductId === _util.googlePayPaymentProductId
+                                    && _GooglePay.isMerchantIdProvided(paymentProductSpecificInputs)) {
+                                    var networks = cleanedJSON.paymentProduct320SpecificData.networks;
+                                    _GooglePay.isGooglePayAvailable(context, paymentProductSpecificInputs, networks).then(function (isGooglePayAvailable) {
+                                        if (isGooglePayAvailable) {
+                                            promise.resolve(cleanedJSON);
+                                        } else {
+                                            // _isGooglePayAvailable returned false so google pay is not available, so reject getPaymentProduct
+                                            promise.reject(cleanedJSON);
+                                        }
+                                    }, function () {
+                                        // _isGooglePayAvailable rejected so not available
+                                        promise.reject(cleanedJSON);
+                                    });
+                                } else {
+                                    promise.resolve(cleanedJSON);
+                                }
+                            } else {
+                                promise.reject('failed to retrieve Payment Product', res);
+                            }
+                        });
             }
             return promise;
         };
@@ -1296,10 +1300,10 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
         this.getPaymentProductGroup = function (paymentProductGroupId, context) {
             var cacheKeyLocale = context.locale ? context.locale + '_' : '';
             var promise = new Promise(),
-				 cacheBust = new Date().getTime(),
-				 cacheKey = 'getPaymentProductGroup-' + paymentProductGroupId + '_' + context.totalAmount + '_'
-					+ context.countryCode + '_' + cacheKeyLocale + context.isRecurring + '_'
-					+ context.currency;
+                cacheBust = new Date().getTime(),
+                cacheKey = 'getPaymentProductGroup-' + paymentProductGroupId + '_' + context.totalAmount + '_'
+                + context.countryCode + '_' + cacheKeyLocale + context.isRecurring + '_'
+                + context.currency;
             if (_providedPaymentProduct && _providedPaymentProduct.id === paymentProductGroupId) {
                 if (_cache[cacheKey]) {
                     setTimeout(function () {
@@ -1318,28 +1322,28 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
             } else {
                 var urlParameterlocale = context.locale ? '&locale=' + context.locale : '';
                 Net.get(formatUrl(_c2SCommunicatorConfiguration.clientApiUrl) + _c2SCommunicatorConfiguration.customerId
-					+ '/productgroups/' + paymentProductGroupId + '?countryCode=' + context.countryCode
-					+ '&isRecurring=' + context.isRecurring + '&amount=' + context.totalAmount
-					+ '&currencyCode=' + context.currency + urlParameterlocale + '&cacheBust=' + cacheBust)
-					.set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
-					.set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
-					.end(function (res) {
-    if (res.success) {
-        var cleanedJSON = _cleanJSON(res.responseJSON, c2SCommunicatorConfiguration.assetUrl);
-        _cache[cacheKey] = cleanedJSON;
-        promise.resolve(cleanedJSON);
-    } else {
-        promise.reject(res.responseJSON);
-    }
-});
+                    + '/productgroups/' + paymentProductGroupId + '?countryCode=' + context.countryCode
+                    + '&isRecurring=' + context.isRecurring + '&amount=' + context.totalAmount
+                    + '&currencyCode=' + context.currency + urlParameterlocale + '&cacheBust=' + cacheBust)
+                    .set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
+                    .set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
+                    .end(function (res) {
+                        if (res.success) {
+                            var cleanedJSON = _cleanJSON(res.responseJSON, c2SCommunicatorConfiguration.assetUrl);
+                            _cache[cacheKey] = cleanedJSON;
+                            promise.resolve(cleanedJSON);
+                        } else {
+                            promise.reject(res.responseJSON);
+                        }
+                    });
             }
             return promise;
         };
 
         this.getPaymentProductIdByCreditCardNumber = function (partialCreditCardNumber, context, isCreateTokenFlow) {
             var promise = new Promise(),
-				 iinDetailsResponse = new IinDetailsResponse(),
-				 cacheKey = 'getPaymentProductIdByCreditCardNumber-' + partialCreditCardNumber;
+                iinDetailsResponse = new IinDetailsResponse(),
+                cacheKey = 'getPaymentProductIdByCreditCardNumber-' + partialCreditCardNumber;
 
             var that = this;
             this.context = context;
@@ -1353,53 +1357,53 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
                 };
                 if (isEnoughDigits(partialCreditCardNumber)) {
                     Net.post(formatUrl(_c2SCommunicatorConfiguration.clientApiUrl) + _c2SCommunicatorConfiguration.customerId + '/services/getIINdetails')
-						.data(JSON.stringify(this.convertContextToIinDetailsContext(partialCreditCardNumber, this.context, isCreateTokenFlow)))
-						.set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
-						.set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
-						.end(function (res) {
-    if (res.success) {
-        iinDetailsResponse.json = res.responseJSON;
-        iinDetailsResponse.countryCode = res.responseJSON.countryCode;
-        iinDetailsResponse.paymentProductId = res.responseJSON.paymentProductId;
-        iinDetailsResponse.isAllowedInContext = res.responseJSON.isAllowedInContext;
-        iinDetailsResponse.coBrands = res.responseJSON.coBrands;
+                        .data(JSON.stringify(this.convertContextToIinDetailsContext(partialCreditCardNumber, this.context, isCreateTokenFlow)))
+                        .set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
+                        .set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
+                        .end(function (res) {
+                            if (res.success) {
+                                iinDetailsResponse.json = res.responseJSON;
+                                iinDetailsResponse.countryCode = res.responseJSON.countryCode;
+                                iinDetailsResponse.paymentProductId = res.responseJSON.paymentProductId;
+                                iinDetailsResponse.isAllowedInContext = res.responseJSON.isAllowedInContext;
+                                iinDetailsResponse.coBrands = res.responseJSON.coBrands;
 
                                 // For the CreateToken flow, no need to check if card is supported or not
-        if (isCreateTokenFlow) {
-            _cache[cacheKey] = iinDetailsResponse;
-            promise.resolve(iinDetailsResponse);
-        } else {
+                                if (isCreateTokenFlow) {
+                                    _cache[cacheKey] = iinDetailsResponse;
+                                    promise.resolve(iinDetailsResponse);
+                                } else {
                                     // check if this card is supported
                                     // if isAllowedInContext is available in the response set status and resolve
-            if (res.responseJSON.hasOwnProperty('isAllowedInContext')) {
-                iinDetailsResponse.status = 'SUPPORTED';
-                if (iinDetailsResponse.isAllowedInContext === false) {
-                    iinDetailsResponse.status = 'EXISTING_BUT_NOT_ALLOWED';
-                }
-                _cache[cacheKey] = iinDetailsResponse;
-                promise.resolve(iinDetailsResponse);
-            } else {
+                                    if (res.responseJSON.hasOwnProperty('isAllowedInContext')) {
+                                        iinDetailsResponse.status = 'SUPPORTED';
+                                        if (iinDetailsResponse.isAllowedInContext === false) {
+                                            iinDetailsResponse.status = 'EXISTING_BUT_NOT_ALLOWED';
+                                        }
+                                        _cache[cacheKey] = iinDetailsResponse;
+                                        promise.resolve(iinDetailsResponse);
+                                    } else {
                                         // if isAllowedInContext is not available get the payment product again to determine status and resolve
-                that.getPaymentProduct(iinDetailsResponse.paymentProductId, that.context).then(function (paymentProduct) {
-                    if (paymentProduct) {
-                        iinDetailsResponse.status = 'SUPPORTED';
-                    } else {
-                        iinDetailsResponse.status = 'UNSUPPORTED';
-                    }
-                    _cache[cacheKey] = iinDetailsResponse;
-                    promise.resolve(iinDetailsResponse);
-                }, function () {
-                    iinDetailsResponse.status = 'UNKNOWN';
-                    promise.reject(iinDetailsResponse);
-                });
-            }
-        }
-    } else {
-        iinDetailsResponse.status = 'UNKNOWN';
-        iinDetailsResponse.json = res.responseJSON;
-        promise.reject(iinDetailsResponse);
-    }
-});
+                                        that.getPaymentProduct(iinDetailsResponse.paymentProductId, that.context).then(function (paymentProduct) {
+                                            if (paymentProduct) {
+                                                iinDetailsResponse.status = 'SUPPORTED';
+                                            } else {
+                                                iinDetailsResponse.status = 'UNSUPPORTED';
+                                            }
+                                            _cache[cacheKey] = iinDetailsResponse;
+                                            promise.resolve(iinDetailsResponse);
+                                        }, function () {
+                                            iinDetailsResponse.status = 'UNKNOWN';
+                                            promise.reject(iinDetailsResponse);
+                                        });
+                                    }
+                                }
+                            } else {
+                                iinDetailsResponse.status = 'UNKNOWN';
+                                iinDetailsResponse.json = res.responseJSON;
+                                promise.reject(iinDetailsResponse);
+                            }
+                        });
                 } else {
                     iinDetailsResponse.status = 'NOT_ENOUGH_DIGITS';
                     setTimeout(function () {
@@ -1416,6 +1420,7 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
                 paymentContext: {
                     countryCode: context.countryCode,
                     isRecurring: context.isRecurring,
+                    isInstallments: context.isInstallments,
                     amountOfMoney: {
                         amount: context.totalAmount,
                         currencyCode: context.currency
@@ -1423,8 +1428,8 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
                 }
             };
 
-			// Account on file id is needed only in case when the merchant
-			// uses multiple payment platforms at the same time.
+            // Account on file id is needed only in case when the merchant
+            // uses multiple payment platforms at the same time.
             if (typeof context.accountOnFileId !== 'undefined') {
                 payload.accountOnFileId = context.accountOnFileId;
             }
@@ -1437,7 +1442,7 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
 
         this.getPublicKey = function () {
             var promise = new Promise(),
-				 cacheKey = 'publicKey';
+                cacheKey = 'publicKey';
 
             if (_cache[cacheKey]) {
                 setTimeout(function () {
@@ -1445,25 +1450,25 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
                 }, 0);
             } else {
                 Net.get(formatUrl(_c2SCommunicatorConfiguration.clientApiUrl) + _c2SCommunicatorConfiguration.customerId + '/crypto/publickey')
-					.set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
-					.set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
-					.end(function (res) {
-    if (res.success) {
-        var publicKeyResponse = new PublicKeyResponse(res.responseJSON);
-        _cache[cacheKey] = publicKeyResponse;
-        promise.resolve(publicKeyResponse);
-    } else {
-        promise.reject('unable to get public key');
-    }
-});
+                    .set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
+                    .set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
+                    .end(function (res) {
+                        if (res.success) {
+                            var publicKeyResponse = new PublicKeyResponse(res.responseJSON);
+                            _cache[cacheKey] = publicKeyResponse;
+                            promise.resolve(publicKeyResponse);
+                        } else {
+                            promise.reject('unable to get public key');
+                        }
+                    });
             }
             return promise;
         };
 
         this.getPaymentProductNetworks = function (paymentProductId, context) {
             var promise = new Promise(),
-				 cacheKey = 'paymentProductNetworks-' + paymentProductId + '_' + context.countryCode + '_' + context.currency + '_'
-					+ context.totalAmount + '_' + context.isRecurring;
+                cacheKey = 'paymentProductNetworks-' + paymentProductId + '_' + context.countryCode + '_' + context.currency + '_'
+                + context.totalAmount + '_' + context.isRecurring;
 
             if (_cache[cacheKey]) {
                 setTimeout(function () {
@@ -1471,25 +1476,25 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
                 }, 0);
             } else {
                 Net.get(formatUrl(_c2SCommunicatorConfiguration.clientApiUrl) + _c2SCommunicatorConfiguration.customerId
-					+ '/products/' + paymentProductId + '/networks' + '?countryCode=' + context.countryCode + '&currencyCode=' + context.currency
-					+ '&amount=' + context.totalAmount + '&isRecurring=' + context.isRecurring)
-					.set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
-					.set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
-					.end(function (res) {
-    if (res.success) {
-        _cache[cacheKey] = res.responseJSON;
-        promise.resolve(res.responseJSON);
-    } else {
-        promise.reject(res.responseJSON);
-    }
-});
+                    + '/products/' + paymentProductId + '/networks' + '?countryCode=' + context.countryCode + '&currencyCode=' + context.currency
+                    + '&amount=' + context.totalAmount + '&isRecurring=' + context.isRecurring)
+                    .set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
+                    .set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
+                    .end(function (res) {
+                        if (res.success) {
+                            _cache[cacheKey] = res.responseJSON;
+                            promise.resolve(res.responseJSON);
+                        } else {
+                            promise.reject(res.responseJSON);
+                        }
+                    });
             }
             return promise;
         };
 
         this.getPaymentProductDirectory = function (paymentProductId, currencyCode, countryCode) {
             var promise = new Promise(),
-				 cacheKey = 'getPaymentProductDirectory-' + paymentProductId + '_' + currencyCode + '_' + countryCode;
+                cacheKey = 'getPaymentProductDirectory-' + paymentProductId + '_' + currencyCode + '_' + countryCode;
 
             if (_cache[cacheKey]) {
                 setTimeout(function () {
@@ -1497,23 +1502,23 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
                 }, 0);
             } else {
                 Net.get(formatUrl(_c2SCommunicatorConfiguration.clientApiUrl) + _c2SCommunicatorConfiguration.customerId + '/products/' + paymentProductId + '/directory?countryCode=' + countryCode + '&currencyCode=' + currencyCode)
-					.set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
-					.set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
-					.end(function (res) {
-    if (res.success) {
-        _cache[cacheKey] = res.responseJSON;
-        promise.resolve(res.responseJSON);
-    } else {
-        promise.reject('unable to retrieve payment product directory');
-    }
-});
+                    .set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
+                    .set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
+                    .end(function (res) {
+                        if (res.success) {
+                            _cache[cacheKey] = res.responseJSON;
+                            promise.resolve(res.responseJSON);
+                        } else {
+                            promise.reject('unable to retrieve payment product directory');
+                        }
+                    });
             }
             return promise;
         };
 
         this.convertAmount = function (amount, source, target) {
             var promise = new Promise(),
-				 cacheKey = 'convertAmount-' + amount + '_' + source + '_' + target;
+                cacheKey = 'convertAmount-' + amount + '_' + source + '_' + target;
 
             if (_cache[cacheKey]) {
                 setTimeout(function () {
@@ -1521,16 +1526,16 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
                 }, 0);
             } else {
                 Net.get(formatUrl(_c2SCommunicatorConfiguration.clientApiUrl) + _c2SCommunicatorConfiguration.customerId + '/services/convert/amount?source=' + source + '&target=' + target + '&amount=' + amount)
-					.set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
-					.set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
-					.end(function (res) {
-    if (res.success) {
-        _cache[cacheKey] = res.responseJSON;
-        promise.resolve(res.responseJSON);
-    } else {
-        promise.reject('unable to convert amount');
-    }
-});
+                    .set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
+                    .set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
+                    .end(function (res) {
+                        if (res.success) {
+                            _cache[cacheKey] = res.responseJSON;
+                            promise.resolve(res.responseJSON);
+                        } else {
+                            promise.reject('unable to convert amount');
+                        }
+                    });
             }
             return promise;
         };
@@ -1539,15 +1544,15 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
             var promise = new Promise();
 
             Net.get(formatUrl(_c2SCommunicatorConfiguration.clientApiUrl) + _c2SCommunicatorConfiguration.customerId + '/payments/' + paymentId + '/thirdpartystatus')
-				.set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
-				.set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
-				.end(function (res) {
-    if (res.success) {
-        promise.resolve(res.responseJSON);
-    } else {
-        promise.reject('unable to retrieve third party status');
-    }
-});
+                .set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
+                .set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
+                .end(function (res) {
+                    if (res.success) {
+                        promise.resolve(res.responseJSON);
+                    } else {
+                        promise.reject('unable to retrieve third party status');
+                    }
+                });
             return promise;
         };
 
@@ -1561,17 +1566,17 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
                 }, 0);
             } else {
                 Net.post(formatUrl(_c2SCommunicatorConfiguration.clientApiUrl) + _c2SCommunicatorConfiguration.customerId + '/products/' + paymentProductId + '/customerDetails')
-					.data(JSON.stringify(context))
-					.set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
-					.set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
-					.end(function (res) {
-    if (res.success) {
-        _cache[cacheKey] = res.responseJSON;
-        promise.resolve(res.responseJSON);
-    } else {
-        promise.reject(res.responseJSON);
-    }
-});
+                    .data(JSON.stringify(context))
+                    .set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
+                    .set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
+                    .end(function (res) {
+                        if (res.success) {
+                            _cache[cacheKey] = res.responseJSON;
+                            promise.resolve(res.responseJSON);
+                        } else {
+                            promise.reject(res.responseJSON);
+                        }
+                    });
             }
             return promise;
         };
@@ -1592,17 +1597,17 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
                 }, 0);
             } else {
                 Net.post(formatUrl(_c2SCommunicatorConfiguration.clientApiUrl) + _c2SCommunicatorConfiguration.customerId + '/products/' + paymentProductId + '/sessions')
-					.data(JSON.stringify(requestParameters))
-					.set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
-					.set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
-					.end(function (res) {
-    if (res.success) {
-        _cache[cacheKey] = res.responseJSON;
-        promise.resolve(res.responseJSON);
-    } else {
-        promise.reject(res.responseJSON);
-    }
-});
+                    .data(JSON.stringify(requestParameters))
+                    .set('X-GCS-ClientMetaInfo', _util.base64Encode(metadata))
+                    .set('Authorization', 'GCS v1Client:' + _c2SCommunicatorConfiguration.clientSessionId)
+                    .end(function (res) {
+                        if (res.success) {
+                            _cache[cacheKey] = res.responseJSON;
+                            promise.resolve(res.responseJSON);
+                        } else {
+                            promise.reject(res.responseJSON);
+                        }
+                    });
             }
             return promise;
         };
@@ -1611,6 +1616,9 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
             var promise = new Promise();
             var _context = context;
             _context.displayName = paymentProductSpecificInputs.merchantName;
+            if (paymentProductSpecificInputs.acquirerCountry) {
+                _context.acquirerCountry = paymentProductSpecificInputs.acquirerCountry;
+            }
             _context.networks = networks;
 
             _ApplePay.initPayment(_context, this).then(function (res) {
@@ -1632,7 +1640,7 @@ define('connectsdk.C2SCommunicator', ['connectsdk.core', 'connectsdk.promise', '
             return cacheKey;
         };
 
-		/* Transforms the JSON representation of a payment product (group) so it matches the result of getPaymentProduct and getPaymentProductGroup. */
+        /* Transforms the JSON representation of a payment product (group) so it matches the result of getPaymentProduct and getPaymentProductGroup. */
         this.transformPaymentProductJSON = function (json) {
             return _cleanJSON(json, _c2SCommunicatorConfiguration.assetUrl);
         };
@@ -1794,6 +1802,7 @@ define('connectsdk.BasicPaymentProduct', ['connectsdk.core', 'connectsdk.Account
         this.allowsTokenization = json.allowsTokenization;
         this.autoTokenized = json.autoTokenized;
         this.allowsInstallments = json.allowsInstallments;
+        this.acquirerCountry = json.acquirerCountry;
         this.displayHints = new PaymentProductDisplayHints(json.displayHints);
         this.id = json.id;
         this.maxAmount = json.maxAmount;
@@ -1824,6 +1833,7 @@ define('connectsdk.BasicPaymentProductGroup', ['connectsdk.core', 'connectsdk.Ac
         this.json = json;
         this.json.type = 'group';
         this.id = json.id;
+        this.acquirerCountry = json.acquirerCountry;
         this.displayHints = new PaymentProductDisplayHints(json.displayHints);
         this.accountsOnFile = [];
         this.accountOnFileById = {};
@@ -1853,7 +1863,7 @@ define('connectsdk.MaskingUtil', ['connectsdk.core', 'connectsdk.MaskedString'],
                 buffer.push(tempMask[index]);
                 offset--;
             } else {
-					// offset++;
+                    // offset++;
                 valuec.splice(index + offset, 1);
                 index--;
             }
@@ -1869,18 +1879,18 @@ define('connectsdk.MaskingUtil', ['connectsdk.core', 'connectsdk.MaskedString'],
                 var maskc = mask.split(''),
                     tempMask = [];
                 for (var i = 0, il = maskc.length; i < il; i++) {
-					// the char '{' and '}' should ALWAYS be ignored
+                    // the char '{' and '}' should ALWAYS be ignored
                     var c = maskc[i];
                     if (c === '{' || c === '}') {
-						// ignore
+                        // ignore
                     } else {
                         tempMask.push(c);
                     }
                 }
-				// tempmask now contains the replaceable chars and the non-replaceable masks at the correct index
+                // tempmask now contains the replaceable chars and the non-replaceable masks at the correct index
                 _fillBuffer(0, 0, buffer, tempMask, valuec);
             } else {
-				// send back as is
+                // send back as is
                 for (var i = 0, il = valuec.length; i < il; i++) {
                     var c = valuec[i];
                     buffer.push(c);
@@ -1888,7 +1898,7 @@ define('connectsdk.MaskingUtil', ['connectsdk.core', 'connectsdk.MaskedString'],
             }
             newValue = buffer.join('');
             var cursor = 1;
-			// calculate the cursor index
+            // calculate the cursor index
             if (oldValue) {
                 var tester = oldValue.split('');
                 for (var i = 0, il = buffer.length; i < il; i++) {
@@ -1920,7 +1930,7 @@ define('connectsdk.MaskingUtil', ['connectsdk.core', 'connectsdk.MaskedString'],
         };
 
         this.removeMask = function (mask, value) {
-			// remove the mask from the masked input
+            // remove the mask from the masked input
             var buffer = [],
                 valuec = (value) ? value.split('') : [];
             if (mask) {
@@ -1929,7 +1939,7 @@ define('connectsdk.MaskingUtil', ['connectsdk.core', 'connectsdk.MaskedString'],
                     inMask = false;
                 for (var i = 0, il = maskc.length; i < il; i++) {
                     valueIndex++;
-					// the char '{' and '}' should ALWAYS be ignored
+                    // the char '{' and '}' should ALWAYS be ignored
                     var c = maskc[i];
                     if (c === '{' || c === '}') {
                         valueIndex--;
@@ -1943,7 +1953,7 @@ define('connectsdk.MaskingUtil', ['connectsdk.core', 'connectsdk.MaskedString'],
                     }
                 }
             } else {
-				// send back as is
+                // send back as is
                 for (var i = 0, il = valuec.length; i < il; i++) {
                     var c = valuec[i];
                     buffer.push(c);
@@ -1961,15 +1971,15 @@ define('connectsdk.ValidationRuleLuhn', ['connectsdk.core'], function (connectsd
     var ValidationRuleLuhn = function (json) {
         this.json = json;
         this.type = json.type,
-        this.errorMessageId = json.type;
+            this.errorMessageId = json.type;
         this.validate = function (value) {
             var luhnArr = [[0, 2, 4, 6, 8, 1, 3, 5, 7, 9], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]],
-				 sum = 0;
+                sum = 0;
 
-	   		value.replace(/\D+/g, '').replace(/[\d]/g, function (c, p, o) {
-		        sum += luhnArr[(o.length - p) & 1][parseInt(c, 10)];
-		    });
-		    return (sum % 10 === 0) && (sum > 0);
+            value.replace(/\D+/g, '').replace(/[\d]/g, function (c, p, o) {
+                sum += luhnArr[(o.length - p) & 1][parseInt(c, 10)];
+            });
+            return (sum % 10 === 0) && (sum > 0);
         };
     };
 
@@ -1979,7 +1989,7 @@ define('connectsdk.ValidationRuleLuhn', ['connectsdk.core'], function (connectsd
 
 define('connectsdk.ValidationRuleExpirationDate', ['connectsdk.core'], function (connectsdk) {
     var _validateDateFormat = function (value) {
-		// value is mmYY or mmYYYY
+        // value is mmYY or mmYYYY
         var pattern = /\d{4}|\d{6}$/g;
         return pattern.test(value);
     };
@@ -2004,22 +2014,22 @@ define('connectsdk.ValidationRuleExpirationDate', ['connectsdk.core'], function 
                 return false;
             }
 
-			// The month is zero-based, so subtract one.
+            // The month is zero-based, so subtract one.
             var expirationMonth = split[0] - 1;
             var expirationYear = split[1];
             var expirationDate = new Date(expirationYear, expirationMonth, 1);
 
-			// Compare the input with the parsed date, to check if the date rolled over.
+            // Compare the input with the parsed date, to check if the date rolled over.
             if (expirationDate.getMonth() !== Number(expirationMonth) || expirationDate.getFullYear() !== Number(expirationYear)) {
                 return false;
             }
 
-			// For comparison, set the current year & month and the maximum allowed expiration date.
+            // For comparison, set the current year & month and the maximum allowed expiration date.
             var nowWithDay = new Date();
             var now = new Date(nowWithDay.getFullYear(), nowWithDay.getMonth(), 1);
             var maxExpirationDate = new Date(nowWithDay.getFullYear() + 25, 11, 1);
 
-			// The card is still valid if it expires this month.
+            // The card is still valid if it expires this month.
             return expirationDate >= now && expirationDate <= maxExpirationDate;
         };
     };
@@ -2032,7 +2042,7 @@ define('connectsdk.ValidationRuleFixedList', ['connectsdk.core'], function (conn
     var ValidationRuleFixedList = function (json) {
         this.json = json;
         this.type = json.type,
-        this.errorMessageId = json.type;
+            this.errorMessageId = json.type;
         this.allowedValues = json.attributes.allowedValues;
 
         this.validate = function (value) {
@@ -2053,7 +2063,7 @@ define('connectsdk.ValidationRuleLength', ['connectsdk.core'], function (connect
     var ValidationRuleLength = function (json) {
         this.json = json;
         this.type = json.type,
-        this.errorMessageId = json.type;
+            this.errorMessageId = json.type;
         this.maxLength = json.attributes.maxLength;
         this.minLength = json.attributes.minLength;
 
@@ -2070,7 +2080,7 @@ define('connectsdk.ValidationRuleRange', ['connectsdk.core'], function (connects
     var ValidationRuleRange = function (json) {
         this.json = json;
         this.type = json.type,
-        this.errorMessageId = json.type;
+            this.errorMessageId = json.type;
         this.maxValue = json.attributes.maxValue;
         this.minValue = json.attributes.minValue;
 
@@ -2091,7 +2101,7 @@ define('connectsdk.ValidationRuleRegularExpression', ['connectsdk.core'], functi
     var ValidationRuleRegularExpression = function (json) {
         this.json = json;
         this.type = json.type,
-        this.errorMessageId = json.type;
+            this.errorMessageId = json.type;
         this.regularExpression = json.attributes.regularExpression;
 
         this.validate = function (value) {
@@ -2108,12 +2118,12 @@ define('connectsdk.ValidationRuleResidentIdNumber', ['connectsdk.core'], functio
     var ValidationRuleResidentIdNumber = function (json) {
         this.json = json;
         this.type = json.type,
-        this.errorMessageId = json.type;
+            this.errorMessageId = json.type;
 
         // https://en.wikipedia.org/wiki/Resident_Identity_Card
         var weights = [];
-		// storing weights in the reverse order so that we can begin
-		// from the 0th position of ID while calculating checksum
+        // storing weights in the reverse order so that we can begin
+        // from the 0th position of ID while calculating checksum
         for (var i = 18; i > 0; i--) {
             weights.push(Math.pow(2, i - 1) % 11);
         }
@@ -2133,7 +2143,7 @@ define('connectsdk.ValidationRuleResidentIdNumber', ['connectsdk.core'], functio
 
             var sum = 0;
             for (var i = 0; i < value.length - 1; i++) {
-            	sum += value.charAt(i) * weights[i];
+                sum += value.charAt(i) * weights[i];
             }
 
             var checkSum = (12 - (sum % 11)) % 11;
@@ -2143,7 +2153,7 @@ define('connectsdk.ValidationRuleResidentIdNumber', ['connectsdk.core'], functio
                 return (checkSum == csChar); // check only values
             }
 
-		    return (csChar === 'X'); // check the type as well
+            return !!csChar && csChar.toUpperCase() === 'X'; // check the type as well
         };
     };
 
@@ -2154,7 +2164,7 @@ define('connectsdk.ValidationRuleEmailAddress', ['connectsdk.core'], function (c
     var ValidationRuleEmailAddress = function (json) {
         this.json = json;
         this.type = json.type,
-		this.errorMessageId = json.type;
+            this.errorMessageId = json.type;
 
         this.validate = function (value) {
             var regexp = new RegExp(/^[^@\.]+(\.[^@\.]+)*@([^@\.]+\.)*[^@\.]+\.[^@\.][^@\.]+$/i);
@@ -2169,7 +2179,7 @@ define('connectsdk.ValidationRuleTermsAndConditions', ['connectsdk.core'], funct
     var ValidationRuleTermsAndConditions = function (json) {
         this.json = json;
         this.type = json.type,
-		this.errorMessageId = json.type;
+            this.errorMessageId = json.type;
 
         this.validate = function (value) {
             return value === true || value === 'true';
@@ -2183,7 +2193,7 @@ define('connectsdk.ValidationRuleBoletoBancarioRequiredness', ['connectsdk.core'
     var ValidationRuleBoletoBancarioRequiredness = function (json) {
         this.json = json;
         this.type = json.type,
-        this.errorMessageId = json.type;
+            this.errorMessageId = json.type;
         this.fiscalNumberLength = json.attributes.fiscalNumberLength;
 
         this.validate = function (value, fiscalNumberValue) {
@@ -2200,74 +2210,74 @@ define('connectsdk.ValidationRuleBoletoBancarioRequiredness', ['connectsdk.core'
 });
 
 define('connectsdk.ValidationRuleIban', ['connectsdk.core'], function (connectsdk) {
-  /**
-   * Sanitize value by remove all unwanted chars of a Iban format
-   *
-   * @param {String} value
-   * @returns {string}
-   * @private
-   */
+    /**
+     * Sanitize value by remove all unwanted chars of a Iban format
+     *
+     * @param {String} value
+     * @returns {string}
+     * @private
+     */
     var _sanitizeValue = function (value) {
         return value.replace(/[^\d\w]+/g, '').toUpperCase();
     };
 
-  /**
-   * Get state if given value is a valid Iban format
-   *
-   * @param {String} value
-   * @returns {boolean}
-   * @private
-   */
+    /**
+     * Get state if given value is a valid Iban format
+     *
+     * @param {String} value
+     * @returns {boolean}
+     * @private
+     */
     var _isValidFormat = function (value) {
         return typeof value === 'string' && /^[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,16}$/.test(_sanitizeValue(value));
     };
 
-  /**
-   * Convert a value to a string needed for validation calculations
-   *
-   * @param {String} value
-   * @returns {string}
-   * @private
-   */
+    /**
+     * Convert a value to a string needed for validation calculations
+     *
+     * @param {String} value
+     * @returns {string}
+     * @private
+     */
     var _toComputedString = function (value) {
         return _sanitizeValue(value)
 
-    // place the first 4 chars to the end
-      .replace(/(^.{4})(.*)/, '$2$1')
+            // place the first 4 chars to the end
+            .replace(/(^.{4})(.*)/, '$2$1')
 
-      // replace letters by corresponding numbers A=10 / Z=35
-      .replace(/[A-Z]/g, function (d) {
-          return d.charCodeAt(0) - 55;
-      });
+            // replace letters by corresponding numbers A=10 / Z=35
+            .replace(/[A-Z]/g, function (d) {
+                return d.charCodeAt(0) - 55;
+            });
     };
 
-  /**
-   * Validate Iban by given json
-   *
-   * @param {Object} json
-   * @constructor
-   */
+    /**
+     * Validate Iban by given json
+     *
+     * @param {Object} json
+     * @constructor
+     */
     var ValidationRuleIban = function (json) {
         this.json = json;
         this.type = json.type;
         this.errorMessageId = json.type;
 
-    /**
-     * Validate Iban nrule
-     *
-     * @see https://github.com/arhs/iban.js/blob/master/iban.js
-     *
-     * @param   {string} value
-     * @returns {boolean}
-     */
+        /**
+         * Validate Iban nrule
+         *
+         * @see https://github.com/arhs/iban.js/blob/master/iban.js
+         *
+         * @param   {string} value
+         * @returns {boolean}
+         */
         this.validate = function (value) {
-      // bail if format is invalid
+            // bail if format is invalid
             if (!_isValidFormat(value)) {
                 return false;
             }
 
-      // Check if reminder module 97 equals 1
-      // only then it should pass the validation
+            // Check if reminder module 97 equals 1
+            // only then it should pass the validation
             var remainder = _toComputedString(value),
                 block;
 
@@ -2317,7 +2327,7 @@ define('connectsdk.ValidationRuleFactory', ['connectsdk.core', 'connectsdk.Valid
 define('connectsdk.DataRestrictions', ['connectsdk.core', 'connectsdk.ValidationRuleExpirationDate', 'connectsdk.ValidationRuleFixedList', 'connectsdk.ValidationRuleLength', 'connectsdk.ValidationRuleLuhn', 'connectsdk.ValidationRuleRange', 'connectsdk.ValidationRuleRegularExpression', 'connectsdk.ValidationRuleEmailAddress', 'connectsdk.ValidationRuleTermsAndConditions', 'connectsdk.ValidationRuleIban', 'connectsdk.ValidationRuleResidentIdNumber', 'connectsdk.ValidationRuleFactory'], function (connectsdk, ValidationRuleExpirationDate, ValidationRuleFixedList, ValidationRuleLength, ValidationRuleLuhn, ValidationRuleRange, ValidationRuleRegularExpression, ValidationRuleEmailAddress, ValidationRuleTermsAndConditions, ValidationRuleIban, ValidationRuleResidentIdNumber, ValidationRuleFactory) {
     var DataRestrictions = function (json, mask) {
         var _parseJSON = function (_json, _validationRules, _validationRuleByType) {
-		    var validationRuleFactory = new ValidationRuleFactory();
+            var validationRuleFactory = new ValidationRuleFactory();
             if (_json.validators) {
                 for (var key in _json.validators) {
                     var validationRule = validationRuleFactory.makeValidator({ type: key, attributes: _json.validators[key] });
@@ -2384,7 +2394,7 @@ define('connectsdk.Tooltip', ['connectsdk.core'], function (connectsdk) {
 define('connectsdk.PaymentProductFieldDisplayHints', ['connectsdk.core', 'connectsdk.Tooltip', 'connectsdk.FormElement'], function (connectsdk, Tooltip, FormElement) {
     var PaymentProductFieldDisplayHints = function (json) {
         this.json = json;
- 		this.displayOrder = json.displayOrder;
+        this.displayOrder = json.displayOrder;
         if (json.formElement) {
             this.formElement = new FormElement(json.formElement);
         }
@@ -2418,11 +2428,11 @@ define('connectsdk.PaymentProductField', ['connectsdk.core', 'connectsdk.Payment
             return _errorCodes;
         };
         this.isValid = function (value) {
-			// isValid checks all datarestrictions
+            // isValid checks all datarestrictions
             var validators = this.dataRestrictions.validationRules;
             var hasError = false;
 
-			// Apply masking value first
+            // Apply masking value first
             var maskedValue = this.applyMask(value);
             value = this.removeMask(maskedValue.formattedValue);
             for (var i = 0, il = validators.length; i < il; i++) {
@@ -2582,11 +2592,11 @@ define('connectsdk.BasicPaymentItems', ['connectsdk.core'], function (connectsdk
                 for (var j = 0, jl = _products.basicPaymentProducts.length; j < jl; j++) {
                     var productMethod = _products.basicPaymentProducts[j].paymentProductGroup;
                     if (productMethod === groupId && groupReplaced === false) {
-						// replace instance by group
+                        // replace instance by group
                         _products.basicPaymentProducts.splice(j, 1, _groups.basicPaymentProductGroups[i]);
                         groupReplaced = true;
                     } else if (productMethod === groupId && groupReplaced === true) {
-						// mark for removal
+                        // mark for removal
                         doRemove.push(j);
                     }
                 }
@@ -2736,7 +2746,7 @@ define('connectsdk.PaymentRequest', ['connectsdk.core'], function (connectsdk) {
             return _accountOnFile;
         };
         this.getClientSessionID = function () {
-		    return clientSessionID;
+            return clientSessionID;
         };
     };
     connectsdk.PaymentRequest = PaymentRequest;
@@ -2753,6 +2763,7 @@ define('connectsdk.C2SPaymentProductContext', ['connectsdk.core'], function (con
             this.locale = payload.locale;
         }
 
+        this.isInstallments = payload.isInstallments || '';
         if (typeof payload.accountOnFileId !== 'undefined') {
             this.accountOnFileId = parseInt(payload.accountOnFileId);
         }
@@ -2786,19 +2797,19 @@ define('connectsdk.JOSEEncryptor', ['connectsdk.core'], function (connectsdk) {
     };
 
     var decodePemPublicKey = function (publickeyB64Encoded) {
-		// step 1: base64decode
+        // step 1: base64decode
         var publickeyB64Decoded = forge.util.decode64(publickeyB64Encoded);
-		// create a bytebuffer with these bytes
+        // create a bytebuffer with these bytes
         var buffer2 = forge.util.createBuffer(publickeyB64Decoded, 'raw');
-		// convert DER to ASN1 object
+        // convert DER to ASN1 object
         var publickeyObject2 = forge.asn1.fromDer(buffer2);
-		// convert to publicKey object
+        // convert to publicKey object
         var publicKey2 = pki.publicKeyFromAsn1(publickeyObject2);
         return publicKey2;
     };
 
     var encryptContentEncryptionKey = function (CEK, publicKey) {
-		// encrypt CEK with OAEP+SHA-1+MGF1Padding
+        // encrypt CEK with OAEP+SHA-1+MGF1Padding
         var encryptedCEK = publicKey.encrypt(CEK, 'RSA-OAEP');
         return encryptedCEK;
     };
@@ -2818,7 +2829,7 @@ define('connectsdk.JOSEEncryptor', ['connectsdk.core'], function (connectsdk) {
         var lengthInBits = buffer.length() * 8;
 
         var buffer2 = forge.util.createBuffer();
-		// convert int to 64bit big endian
+        // convert int to 64bit big endian
         buffer2.putInt32(0);
         buffer2.putInt32(lengthInBits);
         return buffer2.bytes();
@@ -2841,38 +2852,38 @@ define('connectsdk.JOSEEncryptor', ['connectsdk.core'], function (connectsdk) {
 
     var JOSEEncryptor = function () {
         this.encrypt = function (plainTextValues, publicKeyResponse) {
-			// Create protected header and encode it with Base64 encoding
+            // Create protected header and encode it with Base64 encoding
             var payload = JSON.stringify(plainTextValues);
             var protectedHeader = createProtectedHeader(publicKeyResponse.keyId);
             var encodededProtectedHeader = base64UrlEncode(protectedHeader);
 
-			// Create ContentEncryptionKey, is a random byte[]
+            // Create ContentEncryptionKey, is a random byte[]
             var CEK = forge.random.getBytesSync(CEKKEYLENGTH / 8);
             var publicKey = decodePemPublicKey(publicKeyResponse.publicKey);
 
-			// Encrypt the contentEncryptionKey with the GC gateway publickey and encode it with Base64 encoding
+            // Encrypt the contentEncryptionKey with the GC gateway publickey and encode it with Base64 encoding
             var encryptedContentEncryptionKey = encryptContentEncryptionKey(CEK, publicKey);
             var encodedEncryptedContentEncryptionKey = base64UrlEncode(encryptedContentEncryptionKey);
 
-			// Split the contentEncryptionKey in ENC_KEY and MAC_KEY for using hmac
+            // Split the contentEncryptionKey in ENC_KEY and MAC_KEY for using hmac
             var macKey = CEK.substring(0, CEKKEYLENGTH / 2 / 8);
             var encKey = CEK.substring(CEKKEYLENGTH / 2 / 8);
 
-			// Create Initialization Vector
+            // Create Initialization Vector
             var initializationVector = forge.random.getBytesSync(IVLENGTH / 8);
             var encodededinitializationVector = base64UrlEncode(initializationVector);
 
-			// Encrypt content with ContentEncryptionKey and Initialization Vector
+            // Encrypt content with ContentEncryptionKey and Initialization Vector
             var cipherText = encryptPayload(payload, encKey, initializationVector);
             var encodedCipherText = base64UrlEncode(cipherText);
 
-			// Create Additional Authenticated Data  and Additional Authenticated Data Length
+            // Create Additional Authenticated Data  and Additional Authenticated Data Length
             var al = calculateAdditionalAuthenticatedDataLength(encodededProtectedHeader);
 
-			// Calculates HMAC
+            // Calculates HMAC
             var calculatedHmac = calculateHMAC(macKey, encodededProtectedHeader, initializationVector, cipherText, al);
 
-			// Truncate HMAC Value to Create Authentication Tag
+            // Truncate HMAC Value to Create Authentication Tag
             var authenticationTag = calculatedHmac.substring(0, calculatedHmac.length / 2);
             var encodedAuthenticationTag = base64UrlEncode(authenticationTag);
 
@@ -2893,9 +2904,9 @@ define('connectsdk.Encryptor', ['connectsdk.core', 'connectsdk.promise', 'connec
             publicKeyResponsePromise.then(function (publicKeyResponse) {
                 if (paymentRequest.isValid(isCreateTokenFlowOrEncryptCvv)) {
                     var blob = {
-					   clientSessionId: paymentRequest.getClientSessionID(),
-					    nonce: forge.util.bytesToHex(forge.random.getBytesSync(16)),
-					    paymentProductId: paymentRequest.getPaymentProductId(),
+                        clientSessionId: paymentRequest.getClientSessionID(),
+                        nonce: forge.util.bytesToHex(forge.random.getBytesSync(16)),
+                        paymentProductId: paymentRequest.getPaymentProductId(),
                         tokenize: paymentRequest.getTokenize()
                     };
 
@@ -2923,7 +2934,7 @@ define('connectsdk.Encryptor', ['connectsdk.core', 'connectsdk.promise', 'connec
                     blob.paymentValues = paymentValues;
 
                     blob.collectedDeviceInformation = _util.collectDeviceInformation();
-					// use blob to encrypt
+                    // use blob to encrypt
                     var joseEncryptor = new JOSEEncryptor();
                     encryptedString = joseEncryptor.encrypt(blob, publicKeyResponse);
                     promise.resolve(encryptedString);
@@ -2937,6 +2948,7 @@ define('connectsdk.Encryptor', ['connectsdk.core', 'connectsdk.promise', 'connec
         };
     };
 
+    connectsdk.Encryptor = Encryptor;
     return Encryptor;
 });
 
@@ -2983,7 +2995,7 @@ define('connectsdk.Session', ['connectsdk.core', 'connectsdk.C2SCommunicator', '
 
         this.getBasicPaymentItems = function (paymentRequestPayload, useGroups, paymentProductSpecificInputs) {
             var promise = new Promise();
-			// get products & groups
+            // get products & groups
             if (useGroups) {
                 _session.getBasicPaymentProducts(paymentRequestPayload, paymentProductSpecificInputs).then(function (products) {
                     _session.getBasicPaymentProductGroups(paymentRequestPayload).then(function (groups) {
@@ -3110,14 +3122,14 @@ define('connectsdk.Session', ['connectsdk.core', 'connectsdk.C2SCommunicator', '
             return promise;
         };
 
-		/* In case a full JSON representation of a payment product is already available in context,
-			 this method can be used instead of getPaymentProduct for the same (but synchronous) result. */
+        /* In case a full JSON representation of a payment product is already available in context,
+             this method can be used instead of getPaymentProduct for the same (but synchronous) result. */
         this.transformPaymentProductJSON = function (json) {
             return new PaymentProduct(_c2sCommunicator.transformPaymentProductJSON(json));
         };
 
-		/* In case a full JSON representation of a payment product group is already available in context,
-			 this method can be used instead of getPaymentProductGroup for the same (but synchronous) result. */
+        /* In case a full JSON representation of a payment product group is already available in context,
+             this method can be used instead of getPaymentProductGroup for the same (but synchronous) result. */
         this.transformPaymentProductGroupJSON = function (json) {
             return new PaymentProductGroup(_c2sCommunicator.transformPaymentProductJSON(json));
         };

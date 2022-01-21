@@ -1,0 +1,70 @@
+<isif condition="${ingenicoPaymentMethodSpecificOutput && (ingenicoPaymentMethodSpecificOutput.bankAccountBban || ingenicoPaymentMethodSpecificOutput.bankAccountIban || ingenicoPaymentMethodSpecificOutput.bic)}">
+    <!-- Redirect payment specific attributes -->
+    <br />
+    <h3>${Resource.msg('payment.info.redirect.title','ingenico',null)}</h3>
+</isif>
+<isif condition="${ingenicoPaymentMethodSpecificOutput && ingenicoPaymentMethodSpecificOutput.bankAccountIban}">
+    <b>${Resource.msg('payment.info.redirect.accountHolderName','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.bankAccountIban.accountHolderName}" />
+    <br />
+    <b>${Resource.msg('payment.info.redirect.iban','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.bankAccountIban.iban}" />
+</isif>
+<isif condition="${ingenicoPaymentMethodSpecificOutput && ingenicoPaymentMethodSpecificOutput.bankAccountBban}">
+    <b>${Resource.msg('payment.info.redirect.accountHolderName','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.bankAccountBban.accountHolderName}" />
+    <br />
+    <b>${Resource.msg('payment.info.redirect.accountNumber','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.bankAccountBban.accountNumber}" />
+    <br />
+    <b>${Resource.msg('payment.info.redirect.bankCode','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.bankAccountBban.bankCode}" />
+    <br />
+    <b>${Resource.msg('payment.info.redirect.bankName','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.bankAccountBban.bankName}" />
+    <br />
+    <b>${Resource.msg('payment.info.redirect.branchCode','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.bankAccountBban.branchCode}" />
+    <br />
+    <b>${Resource.msg('payment.info.redirect.checkDigit','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.bankAccountBban.checkDigit}" />
+    <br />
+    <b>${Resource.msg('payment.info.redirect.countryCode','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.bankAccountBban.countryCode}" />
+    <br />
+</isif>
+<isif condition="${ingenicoPaymentMethodSpecificOutput && ingenicoPaymentMethodSpecificOutput.bic}">
+    <b>${Resource.msg('payment.info.redirect.bic','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.bic}" />
+</isif>
+
+<isif condition="${ingenicoPaymentMethodSpecificOutput && ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput}">
+    <br />
+    <h3>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput','ingenico',null)}</h3>
+    <isif condition="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAccount}">
+        <h4>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAccount','ingenico',null)}</h4>
+        <b>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAccount.firstName','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAccount.firstName}" />
+        <br />
+        <b>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAccount.surname','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAccount.surname}" />
+        <br />
+        <b>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAccount.payerId','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAccount.payerId}" />
+        <br />
+        <b>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAccount.accountId','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAccount.accountId}" />
+        <br />
+        <b>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAccount.companyName','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAccount.companyName}" />
+        <br />
+        <b>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAccount.countryCode','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAccount.countryCode}" />
+        <br />
+        <b>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAccount.billingAgreementId','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAccount.billingAgreementId}" />
+        <br />
+        <b>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAccount.customerAccountStatus','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAccount.customerAccountStatus}" />
+        <br />
+        <b>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAccount.customerAddressStatus','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAccount.customerAddressStatus}" />
+        <br />
+    </isif>
+    <isif condition="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAddress}">
+        <br />
+        <h4>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAddress','ingenico',null)}</h4>
+        <b>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAddress.street','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAddress.street}" />
+        <br />
+        <b>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAddress.zip','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAddress.zip}" />
+        <br />
+        <b>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAddress.city','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAddress.city}" />
+        <br />
+        <b>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAddress.state','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAddress.state}" />
+        <br />
+        <b>${Resource.msg('payment.info.redirect.paymentProduct840SpecificOutput.customerAddress.countryCode','ingenico',null)}</b>: <isprint value="${ingenicoPaymentMethodSpecificOutput.paymentProduct840SpecificOutput.customerAddress.countryCode}" />
+        <br />
+    </isif>
+</isif>
+

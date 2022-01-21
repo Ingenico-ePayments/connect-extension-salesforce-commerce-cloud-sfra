@@ -9,11 +9,19 @@ function getApiService() {
 }
 
 /**
- * @returns {boolean} requiresApproval
+ * @returns {boolean} redirectRequiresApproval
  */
-function getRequiresApproval() {
+function getRedirectRequiresApproval() {
     var sitePreferences = Site.getCurrent().getPreferences();
-    return sitePreferences.custom.ingenicoRequiresApproval;
+    return sitePreferences.custom.ingenicoRedirectRequiresApproval;
+}
+
+/**
+ * @returns {boolean} cardRequiresApproval
+ */
+function getCardRequiresApproval() {
+    var sitePreferences = Site.getCurrent().getPreferences();
+    return sitePreferences.custom.ingenicoCardRequiresApproval;
 }
 
 /**
@@ -32,10 +40,73 @@ function getVariantIdGuest() {
     return sitePreferences.custom.ingenicoVariantIdGuest;
 }
 
+/**
+ * @returns {string} merchant name that will used in Apple Pay payment sheet
+ */
+function getAppleMerchantName() {
+    var sitePreferences = Site.getCurrent().getPreferences();
+    return sitePreferences.custom.ingenicoAppleMerchantName;
+}
+
+/**
+ * @returns {string} Apple Pay domain verification string
+ */
+function getApplePayDomainVerificationString() {
+    var sitePreferences = Site.getCurrent().getPreferences();
+    return sitePreferences.custom.ingenicoAppleDomainVerification;
+}
+
+/**
+ * @returns {string} google merchant id for Google Pay
+ */
+function getGoogleMerchantId() {
+    var sitePreferences = Site.getCurrent().getPreferences();
+    return sitePreferences.custom.ingenicoGoogleMerchantId;
+}
+
+/**
+ * @returns {string} merchant name that will used in Google Pay payment sheet
+ */
+function getGoogleMerchantName() {
+    var sitePreferences = Site.getCurrent().getPreferences();
+    return sitePreferences.custom.ingenicoGoogleMerchantName;
+}
+
+/**
+ * @returns {string} secret key for encryption/decryption
+ */
+function getPayByLinkSecretKey() {
+    var sitePreferences = Site.getCurrent().getPreferences();
+    return sitePreferences.custom.ingenicoPayByLinkKey;
+}
+
+/**
+ * @returns {string} iv for encryption/decryption
+ */
+function getPayByLinkSecretIV() {
+    var sitePreferences = Site.getCurrent().getPreferences();
+    return sitePreferences.custom.ingenicoPayByLinkIV;
+}
+
+/**
+ * @returns {string} countryCode setting for payment validation
+ */
+function getCountryCodeSettingForPaymentValidation() {
+    var sitePreferences = Site.getCurrent().getPreferences();
+    return sitePreferences.custom.ingenicoCountryCodeForPayment.value;
+}
 
 module.exports = {
     getApiService: getApiService,
-    getRequiresApproval: getRequiresApproval,
+    getRedirectRequiresApproval: getRedirectRequiresApproval,
+    getCardRequiresApproval: getCardRequiresApproval,
     getVariantId: getVariantId,
-    getVariantIdGuest: getVariantIdGuest
+    getVariantIdGuest: getVariantIdGuest,
+    getAppleMerchantName: getAppleMerchantName,
+    getApplePayDomainVerificationString: getApplePayDomainVerificationString,
+    getGoogleMerchantName: getGoogleMerchantName,
+    getGoogleMerchantId: getGoogleMerchantId,
+    getPayByLinkSecretKey: getPayByLinkSecretKey,
+    getPayByLinkSecretIV: getPayByLinkSecretIV,
+    getCountryCodeSettingForPaymentValidation: getCountryCodeSettingForPaymentValidation
 };

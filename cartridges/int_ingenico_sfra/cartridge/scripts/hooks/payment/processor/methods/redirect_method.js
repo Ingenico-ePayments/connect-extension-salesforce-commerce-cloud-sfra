@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 'use strict';
 
 var Transaction = require('dw/system/Transaction');
@@ -14,7 +13,7 @@ var ingenicoPayloadHelpers = require('*/cartridge/scripts/ingenicoPayloadHelpers
  * @returns {Object} returns an error object
  */
 function handle(basket, paymentInformation, paymentProductId) {
-    var requiresApproval = ingenicoPreferences.getRequiresApproval();
+    var requiresApproval = ingenicoPreferences.getRedirectRequiresApproval();
     Transaction.wrap(function () {
         var paymentType = requiresApproval ? PaymentTransaction.TYPE_AUTH : PaymentTransaction.TYPE_CAPTURE;
         paymentInformation.paymentInstrument.paymentTransaction.setType(paymentType);
@@ -42,13 +41,13 @@ function getPaymentMethodSpecificInput(paymentInstrument, paymentProductId) {
 }
 /**
 * Creates a hosted checkout via the Ingenico API
-* @param {dw.order.PaymentInstrument} paymentInstrument The payment instrument
 * @param {dw.order.Order} order Order associated with the payment.
+* @param {dw.order.PaymentInstrument} paymentInstrument The payment instrument
 * @param {number} paymentProductId - id of the chosen payment product
 */
-function authorize(paymentInstrument, order, paymentProductId) {
+function authorize(order, paymentInstrument, paymentProductId) {
     var ingenicoHelpers = require('*/cartridge/scripts/ingenicoHelpers');
-    var requiresApproval = ingenicoPreferences.getRequiresApproval();
+    var requiresApproval = ingenicoPreferences.getRedirectRequiresApproval();
     var paymentMethodSpecificInput = getPaymentMethodSpecificInput(paymentInstrument, paymentProductId);
     var requestBody = ingenicoPayloadHelpers.createRedirectPaymentMethodBody(paymentInstrument, order, requiresApproval, paymentMethodSpecificInput, paymentProductId);
 

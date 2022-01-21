@@ -14,25 +14,33 @@
 
         <isloop iterator="${pdict.Order.getPaymentInstruments().iterator()}" alias="paymentInstrument">
             <isif condition="${paymentInstrument.paymentTransaction.paymentProcessor.getID() === 'INGENICO'}">
-                <isset name="ingenicoTransactionId" value="${paymentInstrument.paymentTransaction.custom.ingenicoTransactionId}" scope="page"/>
-                <isset name="ingenicoResult" value="${paymentInstrument.paymentTransaction.custom.ingenicoResult}" scope="page"/>
-                <isset name="ingenicoIsRefundable" value="${paymentInstrument.paymentTransaction.custom.ingenicoIsRefundable}" scope="page"/>
-                <isset name="ingenicoIsCancellable" value="${paymentInstrument.paymentTransaction.custom.ingenicoIsCancellable}" scope="page"/>
-                <isset name="ingenicoRefundIDs" value="${paymentInstrument.paymentTransaction.custom.ingenicoRefundIDs}" scope="page"/>
-                <isset name="ingenicoTransactionAmount" value="${paymentInstrument.paymentTransaction.custom.ingenicoTransactionAmount}" scope="page"/>
-                <isset name="ingenicoHostedCheckoutId" value="${paymentInstrument.paymentTransaction.custom.ingenicoHostedCheckoutId}" scope="page"/>
-                <isset name="paymentTransactionUUID" value="${paymentInstrument.paymentTransaction.UUID}" scope="page"/>
+                <isset name="paymentTransaction" value="${paymentInstrument.paymentTransaction}" scope="page"/>
+                <isset name="ingenicoTransactionId" value="${paymentTransaction.custom.ingenicoTransactionId}" scope="page"/>
+                <isset name="ingenicoResult" value="${paymentTransaction.custom.ingenicoResult}" scope="page"/>
+                <isset name="ingenicoIsRefundable" value="${paymentTransaction.custom.ingenicoIsRefundable}" scope="page"/>
+                <isset name="ingenicoIsCancellable" value="${paymentTransaction.custom.ingenicoIsCancellable}" scope="page"/>
+                <isset name="ingenicoTransactionAmount" value="${paymentTransaction.custom.ingenicoTransactionAmount}" scope="page"/>
+                <isset name="ingenicoHostedCheckoutId" value="${paymentTransaction.custom.ingenicoHostedCheckoutId}" scope="page"/>
+                <isset name="paymentTransactionUUID" value="${paymentTransaction.UUID}" scope="page"/>
                 <isset name="orderNumber" value="${pdict.Order.getOrderNo()}" scope="page"/>
                 <isset name="currencySymbol" value="${dw.util.Currency.getCurrency(pdict.Order.getCurrencyCode()).getSymbol()}" scope="page"/>
+                <isset name="ingenicoPaymentMethodSpecificOutput"
+                       value="${paymentTransaction.custom.ingenicoPaymentMethodSpecificOutput
+                               ? JSON.parse(paymentTransaction.custom.ingenicoPaymentMethodSpecificOutput)
+                               : null}" scope="page"/>
 
                 <b>${Resource.msg('payment.info.transaction.id','ingenico',null)}</b>: <isprint value="${ingenicoTransactionId}" />
                 <br />
                 <b>${Resource.msg('payment.info.transaction.status','ingenico',null)}</b>: <isprint value="${ingenicoResult}" />
                 <br />
-                <b>${Resource.msg('payment.info.transaction.amount','ingenico',null)}</b>: <isprint value="${ingenicoTransactionAmount / 100}" />
+                <b>${Resource.msg('payment.info.transaction.amount','ingenico',null)}</b>: <isprint value="${ingenicoTransactionAmount}" />
                 <br />
             </isif>
+
+            <isinclude template="order/cardPaymentInfo" />
+            <isinclude template="order/redirectPaymentInfo" />
         </isloop>
+
     </div>
 
     <div class="actions">

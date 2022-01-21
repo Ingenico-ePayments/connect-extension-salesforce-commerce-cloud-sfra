@@ -7,6 +7,9 @@ var OrderMgr = require('dw/order/OrderMgr');
 var Logger = require('dw/system/Logger');
 var ingenicoLogger = Logger.getLogger('Ingenico');
 
+var csrfProtection = require('*/cartridge/scripts/middleware/csrf');
+var consentTracking = require('*/cartridge/scripts/middleware/consentTracking');
+
 var GCS_SIGNATURE_HEADER = 'x-gcs-signature';
 var GCS_WEBHOOKS_VERIFICATION_HEADER = 'x-gcs-webhooks-endpoint-verification';
 
@@ -26,8 +29,7 @@ server.use('Notify', server.middleware.https, function (req, res, next) {
             verificationString: verificationHeaderValue
         });
         return next();
-    } else if (req.httpMethod === 'POST') {
-        // Parse webhook
+    } else if (req.httpMethod === 'POST') { // Parse webhook
         try {
             webhook = ingenicoWebhooks.parseWebhook(req);
         } catch (err) {
@@ -123,46 +125,64 @@ function toPaymentCategory(paymentStatus) {
 }
 
 /**
+ * Returns true if it is a  Pay By Link payment method
+ * @param {dw.order.PaymentTransaction} paymentTransaction that is linked to the order
+ * @returns {boolean} true if it is a PAY_BY_LINK payment method
+ */
+function isPayByLinkPaymentMethod(paymentTransaction) {
+    return paymentTransaction.getPaymentInstrument().getPaymentMethod().equals('PAY_BY_LINK');
+}
+
+/**
  * Redirect customer to the correct page based on the checkout status
  * @param {response} res response
  * @param {dw.order.Order} order that is linked to the checkout
+ * @param {dw.order.PaymentTransaction} paymentTransaction that is linked to the order
  * @param {Object} checkoutResult result object of the hosted checkout
  */
-function handleCheckoutStatus(res, order, checkoutResult) {
+function handleCheckoutStatus(res, order, paymentTransaction, checkoutResult) {
+    const ingenicoResponseHelpers = require('*/cartridge/scripts/ingenicoResponseHelpers');
     switch (checkoutResult.status) {
         case 'PAYMENT_CREATED':
             // payment created, but status might be rejected or unknown
             var paymentCategory = toPaymentCategory(checkoutResult.createdPaymentOutput.payment.status);
             if (paymentCategory === 'REJECTED') {
-                Transaction.wrap(function () {
-                    OrderMgr.failOrder(order, true);
-                });
-                res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'payment', 'paymentError', 'PAYMENT-NOT-VALID', 'checkout', null));
+                if (isPayByLinkPaymentMethod(paymentTransaction)) {
+                    res.redirect(URLUtils.url('IngenicoPayByLink-Retry', 'ID', order.orderNo, 'token', order.orderToken, 'paymentError', 'PAYMENT-NOT-VALID').toString());
+                } else {
+                    Transaction.wrap(function () {
+                        OrderMgr.failOrder(order, true);
+                    });
+                    res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'payment', 'paymentError', 'PAYMENT-NOT-VALID', 'checkout', null).toString());
+                }
                 break;
             } else if (paymentCategory === 'SUCCESFUL') {
-                res.redirect(URLUtils.url('Order-Confirm', 'ID', order.orderNo, 'token', order.orderToken).toString());
+                ingenicoResponseHelpers.renderConfirmationPage(res, order);
             } else {
-                res.redirect(URLUtils.url('Order-Confirm', 'ID', order.orderNo, 'token', order.orderToken, 'message', 'unknown-payment-state').toString());
+                ingenicoResponseHelpers.renderConfirmationPage(res, order, 'unknown-payment-state');
             }
             break;
         case 'IN_PROGRESS':
             // redirect to confirmation page with unknown payment state
-            res.redirect(URLUtils.url('Order-Confirm', 'ID', order.orderNo, 'token', order.orderToken, 'message', 'unknown-payment-state').toString());
+            ingenicoResponseHelpers.renderConfirmationPage(res, order, 'unknown-payment-state');
             break;
         case 'CANCELLED_BY_CONSUMER':
-            Transaction.wrap(function () {
-                OrderMgr.failOrder(order, true);
-            });
-
-            res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'payment', 'paymentError', 'PAYMENT-CANCELLED', 'checkout', null));
+            // if it is pay-by-link RPP session, then redirect consumer to another page than the checkout page
+            if (isPayByLinkPaymentMethod(paymentTransaction)) {
+                res.redirect(URLUtils.url('IngenicoPayByLink-Retry', 'ID', order.orderNo, 'token', order.orderToken, 'paymentError', 'PAYMENT-CANCELLED').toString());
+            } else {
+                Transaction.wrap(function () {
+                    OrderMgr.failOrder(order, true);
+                });
+                res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'payment', 'paymentError', 'PAYMENT-CANCELLED', 'checkout', null).toString());
+            }
             break;
         case 'CLIENT_NOT_ELIGIBLE_FOR_SELECTED_PAYMENT_PRODUCT':
         default:
             Transaction.wrap(function () {
                 OrderMgr.failOrder(order, true);
             });
-
-            res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'payment', 'paymentError', 'PAYMENT-NOT-VALID', 'checkout', null));
+            res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'payment', 'paymentError', 'PAYMENT-NOT-VALID', 'checkout', null).toString());
     }
 }
 
@@ -173,37 +193,40 @@ function handleCheckoutStatus(res, order, checkoutResult) {
  * @param {Object} paymentStatus of the payment
  */
 function handlePaymentStatus(res, order, paymentStatus) {
+    const ingenicoResponseHelpers = require('*/cartridge/scripts/ingenicoResponseHelpers');
     var paymentCategory = toPaymentCategory(paymentStatus);
     if (paymentCategory === 'REJECTED') {
         Transaction.wrap(function () {
             OrderMgr.failOrder(order, true);
         });
-        res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'payment', 'paymentError', 'PAYMENT-NOT-VALID', 'checkout', null));
+        res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'payment', 'paymentError', 'PAYMENT-NOT-VALID'));
     } else if (paymentCategory === 'SUCCESFUL') {
-        res.redirect(URLUtils.url('Order-Confirm', 'ID', order.orderNo, 'token', order.orderToken).toString());
+        ingenicoResponseHelpers.renderConfirmationPage(res, order);
     } else {
-        res.redirect(URLUtils.url('Order-Confirm', 'ID', order.orderNo, 'token', order.orderToken, 'message', 'unknown-payment-state').toString());
+        ingenicoResponseHelpers.renderConfirmationPage(res, order, 'unknown-payment-state');
     }
 }
 
-server.get('ShowConfirmation', server.middleware.https, function (req, res, next) {
+server.get('ShowConfirmation', consentTracking.consent, csrfProtection.generateToken, server.middleware.https, function (req, res, next) {
     var ingenicoHelpers = require('*/cartridge/scripts/ingenicoHelpers');
+    var ingenicoResponseHelpers = require('*/cartridge/scripts/ingenicoResponseHelpers');
     var order = OrderMgr.getOrder(req.querystring.orderNo, req.querystring.orderToken);
     var transaction;
-    var iterator = order.paymentInstruments.iterator();
 
-    while (iterator.hasNext()) {
-        var paymentInstrument = iterator.next();
+    for (let paymentInstrument of order.paymentInstruments.toArray()) {
         if (paymentInstrument.paymentTransaction.custom.ingenicoHostedCheckoutId === req.querystring.hostedCheckoutId) {
             // hosted checkout flow
             transaction = paymentInstrument.paymentTransaction;
             break;
         } else if (paymentInstrument.paymentTransaction.custom.ingenicoTransactionId === req.querystring.REF &&
-                    paymentInstrument.paymentTransaction.custom.ingenicoRETURNMAC === decodeURIComponent(req.querystring.RETURNMAC)) {
+            paymentInstrument.paymentTransaction.custom.ingenicoRETURNMAC === decodeURIComponent(req.querystring.RETURNMAC)) {
             // inline redirect payment flow
             transaction = paymentInstrument.paymentTransaction;
             break;
-        } else if (paymentInstrument.paymentTransaction.custom.ingenicoTransactionId && paymentInstrument.paymentTransaction.paymentInstrument.paymentMethod === 'CREDIT_CARD') {
+        } else if (paymentInstrument.paymentTransaction.custom.ingenicoTransactionId &&
+            (paymentInstrument.paymentTransaction.paymentInstrument.paymentMethod === 'CREDIT_CARD' ||
+                paymentInstrument.paymentTransaction.paymentInstrument.paymentMethod === 'GOOGLE_PAY' ||
+                paymentInstrument.paymentTransaction.paymentInstrument.paymentMethod === 'APPLE_PAY')) {
             // credit card inline payment flows
             transaction = paymentInstrument.paymentTransaction;
             break;
@@ -217,15 +240,31 @@ server.get('ShowConfirmation', server.middleware.https, function (req, res, next
     if (transaction.custom.ingenicoHostedCheckoutId) {
         // get the hosted checkout status
         var checkoutResult = ingenicoHelpers.getHostedCheckoutStatus(req.querystring.hostedCheckoutId);
-        handleCheckoutStatus(res, order, checkoutResult);
-    } else if (transaction.custom.ingenicoTransactionId && transaction.custom.ingenicoRedirect) {
-        // get the status of redirect payment methods
-        var paymentResult = ingenicoHelpers.getPaymentStatus(req.querystring.REF);
-        handlePaymentStatus(res, order, paymentResult.status);
+        if (checkoutResult.createdPaymentOutput) {
+            Transaction.wrap(function () {
+                ingenicoResponseHelpers.populatePaymentTransactionWithPaymentOutput(transaction, checkoutResult.createdPaymentOutput.payment);
+            });
+        }
+        handleCheckoutStatus(res, order, transaction, checkoutResult);
     } else {
-        handlePaymentStatus(res, order, transaction.custom.ingenicoResult);
+        var paymentStatus = transaction.custom.ingenicoResult;
+        if (req.querystring.REF || transaction.custom.ingenicoTransactionId) {
+            var paymentId = req.querystring.REF || transaction.custom.ingenicoTransactionId;
+            var paymentResult = ingenicoHelpers.getPaymentStatus(paymentId);
+            paymentStatus = paymentResult.status;
+            Transaction.wrap(function () {
+                ingenicoResponseHelpers.populatePaymentTransactionWithPaymentOutput(transaction, paymentResult);
+            });
+        }
+        handlePaymentStatus(res, order, paymentStatus);
     }
 
+    return next();
+});
+
+server.get('GetClientSession', function (req, res, next) {
+    var ingenicoHelpers = require('*/cartridge/scripts/ingenicoHelpers');
+    res.json(ingenicoHelpers.createClientSession());
     return next();
 });
 

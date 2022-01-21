@@ -1,0 +1,3 @@
+<div>
+    <span>${Resource.msg('ingenico.msg.payment.type.sofort', 'ingenico', null)}</span>
+</div>

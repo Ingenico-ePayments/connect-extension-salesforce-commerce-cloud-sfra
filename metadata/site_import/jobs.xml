@@ -14,8 +14,8 @@
         <triggers>
             <run-recurring enabled="true">
 				<recurrence>
-					<date>2020-07-21Z</date>
-					<time>12:19:57.000Z</time>
+					<date-from>2020-07-21Z</date-from>
+					<start-time>12:19:57.000Z</start-time>
 					<interval>1m</interval>
 				</recurrence>
             </run-recurring>
@@ -35,8 +35,8 @@
         <triggers>
             <run-recurring enabled="true">
 				<recurrence>
-					<date>2020-07-21Z</date>
-					<time>12:19:57.000Z</time>
+					<date-from>2020-07-21Z</date-from>
+					<start-time>12:19:57.000Z</start-time>
 					<interval>60m</interval>
 				</recurrence>
             </run-recurring>

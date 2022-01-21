@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 'use strict';
 
 var Transaction = require('dw/system/Transaction');
@@ -12,7 +11,7 @@ var ingenicoPreferences = require('*/cartridge/scripts/ingenicoPreferences');
  * @returns {Object} returns an error object
  */
 function handle(basket, paymentInformation) {
-    var requiresApproval = ingenicoPreferences.getRequiresApproval();
+    var requiresApproval = ingenicoPreferences.getCardRequiresApproval();
     Transaction.wrap(function () {
         var paymentType = requiresApproval ? PaymentTransaction.TYPE_AUTH : PaymentTransaction.TYPE_CAPTURE;
         paymentInformation.paymentInstrument.paymentTransaction.setType(paymentType);
@@ -26,15 +25,15 @@ function handle(basket, paymentInformation) {
 
 /**
 * Creates a hosted checkout via the Ingenico API
+* @param {dw.order.Order} order associated with the payment.
 * @param {dw.order.PaymentInstrument} paymentInstrument The payment instrument
-* @param {dw.order.Order} order Order associated with the payment.
 * @param {string} encryptedCustomerInput encrypted blob containing card details
 * @param {number} paymentProductId - id of the chosen payment product
 */
-function authorize(paymentInstrument, order) {
+function authorize(order, paymentInstrument) {
     var ingenicoPayloadHelpers = require('*/cartridge/scripts/ingenicoPayloadHelpers');
     var ingenicoHelpers = require('*/cartridge/scripts/ingenicoHelpers');
-    var requiresApproval = ingenicoPreferences.getRequiresApproval();
+    var requiresApproval = ingenicoPreferences.getCardRequiresApproval();
     var storedPaymentUUID = paymentInstrument.custom.storedPaymentUUID;
 
     // find the token based on storedPaymentUUID
@@ -66,12 +65,11 @@ function authorize(paymentInstrument, order) {
         throw new Error('Unable to create a payment for order with orderNo ' + order.orderNo);
     }
 
-    if (cardPaymentResponse.merchantAction && cardPaymentResponse.merchantAction.actionType === 'REDIRECT') {
-        Transaction.wrap(function () {
-            paymentInstrument.paymentTransaction.custom.ingenicoRedirect = cardPaymentResponse.merchantAction.redirectData.redirectURL;
-        });
-    }
     Transaction.wrap(function () {
+        if (cardPaymentResponse.merchantAction && cardPaymentResponse.merchantAction.actionType === 'REDIRECT') {
+            paymentInstrument.paymentTransaction.custom.ingenicoRedirect = cardPaymentResponse.merchantAction.redirectData.redirectURL;
+        }
+
         paymentInstrument.paymentTransaction.custom.ingenicoMerchantReference = cardPaymentResponse.payment.paymentOutput.references.merchantReference;
         paymentInstrument.paymentTransaction.custom.ingenicoTransactionId = cardPaymentResponse.payment.id;
         paymentInstrument.paymentTransaction.custom.ingenicoResult = cardPaymentResponse.payment.status;

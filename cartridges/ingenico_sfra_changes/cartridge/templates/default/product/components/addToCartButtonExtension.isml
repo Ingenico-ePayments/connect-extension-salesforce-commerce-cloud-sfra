@@ -1,0 +1,25 @@
+<isscript>
+    var assets = require('*/cartridge/scripts/assets.js');
+    assets.addJs('/js/googlepay.js')
+    assets.addCss('/css/googlepay.css')
+    assets.addJs('/js/applepay.js')
+    assets.addCss('/css/applepay.css')
+    assets.addJs('/js/productIngenico.js')
+</isscript>
+
+<div id="apple-button-container" class="apple-button-container product-detail" style="display:none;">
+    <div class="apple-pay-button apple-pay-button-black btn-block" id="apple-pay-button" data-from-product="true"></div>
+</div>
+
+<div id="googlepay-button-container" class="product-detail">
+    <div id="google-pay-button" data-from-product="true"></div>
+</div>
+
+<isset name="applePayData" value="${require('*/cartridge/scripts/checkout/ingenicoCheckoutHelper').getIngenicoExpressCheckoutData('APPLE_PAY', product.id, product.selectedQuantity)}" scope="page" />
+<isset name="googlePayData" value="${require('*/cartridge/scripts/checkout/ingenicoCheckoutHelper').getIngenicoExpressCheckoutData('GOOGLE_PAY', product.id, product.selectedQuantity)}" scope="page" />
+
+<input type="hidden" id="ingenico_applepay_data" value="${JSON.stringify(applePayData)}">
+<input type="hidden" id="ingenico_googlepay_data" value="${JSON.stringify(googlePayData)}">
+<input type="hidden" id="ingenico_express_checkout_data_url" value="${dw.web.URLUtils.url('IngenicoExpressCheckout-ExpressCheckoutData')}">
+
+<script async src="https://pay.google.com/gp/p/js/pay.js"></script>

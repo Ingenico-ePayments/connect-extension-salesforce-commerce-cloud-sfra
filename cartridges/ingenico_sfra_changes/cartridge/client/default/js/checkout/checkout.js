@@ -1,13 +1,14 @@
-/* global jQuery $ */
+/* global jQuery */
 'use strict';
 
+var customerHelpers = require('base/checkout/customer');
 var addressHelpers = require('base/checkout/address');
 var shippingHelpers = require('base/checkout/shipping');
 var billingHelpers = require('./billing');
 var summaryHelpers = require('base/checkout/summary');
-var formHelpers = require('base/checkout/formErrors');
+var formHelpers = require('../checkout/formErrors');
 var scrollAnimate = require('base/components/scrollAnimate');
-var ConnectSDK = require('../paymentInstruments/connectsdk');
+var ConnectSDK = require('../connect/connectsdk');
 
 /**
  * Create the jQuery Checkout Plugin.
@@ -29,6 +30,9 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
         // Collect form data from user input
         //
         var formData = {
+            // Customer Data
+            customer: {},
+
             // Shipping Address
             shipping: {},
 
@@ -46,6 +50,7 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
         // The different states/stages of checkout
         //
         var checkoutStages = [
+            'customer',
             'shipping',
             'payment',
             'placeOrder',
@@ -74,14 +79,17 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
          * @param {Object} defer object
          */
         function sumbitPayment(paymentForm, defer) {
+            // remove previous errors first
+            $('#card-error').remove();
+
             $.ajax({
                 url: $('#dwfrm_billing').attr('action'),
                 method: 'POST',
                 data: paymentForm,
                 success: function (data) {
-                 // enable the next:Place Order button here
+                    // enable the next:Place Order button here
                     $('body').trigger('checkout:enableButton', '.next-step-button button');
-                // look for field validation errors
+                    // look for field validation errors
                     if (data.error) {
                         if (data.fieldErrors.length) {
                             data.fieldErrors.forEach(function (error) {
@@ -105,21 +113,21 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
 
                         defer.reject();
                     } else {
-                    //
-                    // Populate the Address Summary
-                    //
+                        //
+                        // Populate the Address Summary
+                        //
                         $('body').trigger('checkout:updateCheckoutView',
-                        { order: data.order, customer: data.customer });
+                            { order: data.order, customer: data.customer });
 
                         if (data.renderedPaymentInstruments) {
                             $('.stored-payments').empty().html(
-                            data.renderedPaymentInstruments
-                        );
+                                data.renderedPaymentInstruments
+                            );
                         }
 
                         if (data.customer.registeredUser
-                        && data.customer.customerPaymentInstruments.length
-                    ) {
+                            && data.customer.customerPaymentInstruments.length
+                        ) {
                             $('.cancel-new-payment').removeClass('checkout-hidden');
                         }
 
@@ -128,7 +136,7 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
                     }
                 },
                 error: function (err) {
-                // enable the next:Place Order button here
+                    // enable the next:Place Order button here
                     $('body').trigger('checkout:enableButton', '.next-step-button button');
                     if (err.responseJSON && err.responseJSON.redirectUrl) {
                         window.location.href = err.responseJSON.redirectUrl;
@@ -153,7 +161,37 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
                 var stage = checkoutStages[members.currentStage];
                 var defer = $.Deferred(); // eslint-disable-line
 
-                if (stage === 'shipping') {
+                if (stage === 'customer') {
+                    //
+                    // Clear Previous Errors
+                    //
+                    customerHelpers.methods.clearErrors();
+                    //
+                    // Submit the Customer Form
+                    //
+                    var customerFormSelector = customerHelpers.methods.isGuestFormActive() ? customerHelpers.vars.GUEST_FORM : customerHelpers.vars.REGISTERED_FORM;
+                    var customerForm = $(customerFormSelector);
+                    $.ajax({
+                        url: customerForm.attr('action'),
+                        type: 'post',
+                        data: customerForm.serialize(),
+                        success: function (data) {
+                            if (data.redirectUrl) {
+                                window.location.href = data.redirectUrl;
+                            } else {
+                                customerHelpers.methods.customerFormResponse(defer, data);
+                            }
+                        },
+                        error: function (err) {
+                            if (err.responseJSON && err.responseJSON.redirectUrl) {
+                                window.location.href = err.responseJSON.redirectUrl;
+                            }
+                            // Server error submitting form
+                            defer.reject(err.responseJSON);
+                        }
+                    });
+                    return defer;
+                } else if (stage === 'shipping') {
                     //
                     // Clear Previous Errors
                     //
@@ -182,7 +220,7 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
                                     $('body').trigger('checkout:updateCheckoutView',
                                         { order: data.order, customer: data.customer });
                                     defer.resolve();
-                                } else if ($('.shipping-error .alert-danger').length < 1) {
+                                } else if (data.message && $('.shipping-error .alert-danger').length < 1) {
                                     var errorMsg = data.message;
                                     var errorHtml = '<div class="alert alert-danger alert-dismissible valid-cart-error ' +
                                         'fade show" role="alert">' +
@@ -192,6 +230,8 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
                                     $('.shipping-error').append(errorHtml);
                                     scrollAnimate($('.shipping-error'));
                                     defer.reject();
+                                } else if (data.redirectUrl) {
+                                    window.location.href = data.redirectUrl;
                                 }
                             },
                             error: function () {
@@ -218,7 +258,7 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
                             type: 'post',
                             data: shippingFormData,
                             success: function (data) {
-                                 // enable the next:Payment button here
+                                // enable the next:Payment button here
                                 $('body').trigger('checkout:enableButton', '.next-step-button button');
                                 shippingHelpers.methods.shippingFormResponse(defer, data);
                             },
@@ -268,6 +308,7 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
                     var activeTabId = $('.tab-pane.active').attr('id');
                     var paymentInfoSelector = '#dwfrm_billing .' + activeTabId + ' .payment-form-fields :input';
                     var paymentInfoForm = $(paymentInfoSelector).serialize();
+
                     $('body').trigger('checkout:serializeBilling', {
                         form: $(paymentInfoSelector),
                         data: paymentInfoForm,
@@ -308,9 +349,10 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
                             }
                         }
                     }
-                     // disable the next:Place Order button here
+                    // disable the next:Place Order button here
                     $('body').trigger('checkout:disableButton', '.next-step-button button');
 
+                    // INGENICO: handle Ingenico credit card payment
                     if ($('.payment-information').data('payment-method-id') === 'CREDIT_CARD' || cvvCode) {
                         // if payment method is credit card, we should apply client-side encryption using Ingenico's Connect SDK
                         var clientSessionUrl = $('input[name=client-session-url]').val();
@@ -362,7 +404,7 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
                                 } else {
                                     billingHelpers.createEncryptedCustomerInput(session, cardDetails, paymentDetails, function (encryptedString) {
                                         paymentForm += '&dwfrm_billing_creditCardFields_encryptedCustomerInput=' + encryptedString +
-                                           '&dwfrm_billing_creditCardFields_saveCard=' + $('#saveCreditCard').is(':checked');
+                                            '&dwfrm_billing_creditCardFields_saveCard=' + $('#saveCreditCard').is(':checked');
                                         if (encryptedString) {
                                             sumbitPayment(paymentForm, defer);
                                         }
@@ -370,6 +412,7 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
                                 }
                             },
                             error: function (err) {
+                                // eslint-disable-next-line no-console
                                 console.error(err);
                             }
                         });
@@ -378,10 +421,23 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
                         paymentForm += '&' + paymentInfoForm;
                         sumbitPayment(paymentForm, defer);
                     }
+
                     return defer;
                 } else if (stage === 'placeOrder') {
                     // disable the placeOrder button here
                     $('body').trigger('checkout:disableButton', '.next-step-button button');
+
+                    const isFromCart = document.getElementById('isFromCart').value;
+                    // if payment method is GOOGLE PAY and flow is not triggered from the Cart page,
+                    // authorize the customer before calling Ingenico API
+                    if ($('.payment-details span').text().includes('Google Pay') && isFromCart !== 'true') {
+                        $('#google-pay-button').trigger('checkout:googlepay');
+                        return defer;
+                    } else if ($('.payment-details span').text().includes('Apple Pay') && isFromCart !== 'true') {
+                        $('#apple-pay-button').trigger('checkout:applepay');
+                        return defer;
+                    }
+
                     $.ajax({
                         url: $('.place-order').data('action'),
                         method: 'POST',
@@ -397,17 +453,33 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
                                     defer.reject(data);
                                 }
                             } else {
+                                // INGENICO: Don't use the original SFRA redirect here.
+
+                                // var redirect = $('<form>')
+                                //     .appendTo(document.body)
+                                //     .attr({
+                                //         method: 'POST',
+                                //         action: data.continueUrl
+                                //     });
+                                //
+                                // $('<input>')
+                                //     .appendTo(redirect)
+                                //     .attr({
+                                //         name: 'orderID',
+                                //         value: data.orderID
+                                //     });
+                                //
+                                // $('<input>')
+                                //     .appendTo(redirect)
+                                //     .attr({
+                                //         name: 'orderToken',
+                                //         value: data.orderToken
+                                //     });
+                                //
+                                // redirect.submit();
+
+                                // INGENICO: Instead, redirect to the continueUrl using a GET instead of a POST HTTP method.
                                 var continueUrl = data.continueUrl;
-                                // var urlParams = {
-                                //     ID: data.orderID,
-                                //     token: data.orderToken
-                                // };
-
-                                // continueUrl += (continueUrl.indexOf('?') !== -1 ? '&' : '?') +
-                                //     Object.keys(urlParams).map(function (key) {
-                                //         return key + '=' + encodeURIComponent(urlParams[key]);
-                                //     }).join('&');
-
                                 window.location.href = continueUrl;
                                 defer.resolve(data);
                             }
@@ -438,6 +510,16 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
                     .indexOf($('.data-checkout-stage').data('checkout-stage'));
                 $(plugin).attr('data-checkout-stage', checkoutStages[members.currentStage]);
 
+                $('body').on('click', '.submit-customer-login', function (e) {
+                    e.preventDefault();
+                    members.nextStage();
+                });
+
+                $('body').on('click', '.submit-customer', function (e) {
+                    e.preventDefault();
+                    members.nextStage();
+                });
+
                 //
                 // Handle Payment option selection
                 //
@@ -455,6 +537,10 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
                 //
                 // Handle Edit buttons on shipping and payment summary cards
                 //
+                $('.customer-summary .edit-button', plugin).on('click', function () {
+                    members.gotoStage('customer');
+                });
+
                 $('.shipping-summary .edit-button', plugin).on('click', function () {
                     if (!$('#checkout-main').hasClass('multi-ship')) {
                         $('body').trigger('shipping:selectSingleShipping');
@@ -503,6 +589,7 @@ var ConnectSDK = require('../paymentInstruments/connectsdk');
 
                 promise.done(function () {
                     // Update UI with new stage
+                    $('.error-message').hide();
                     members.handleNextStage(true);
                 });
 
@@ -593,6 +680,10 @@ var exports = {
 
     updateCheckoutView: function () {
         $('body').on('checkout:updateCheckoutView', function (e, data) {
+            if (data.csrfToken) {
+                $("input[name*='csrf_token']").val(data.csrfToken);
+            }
+            customerHelpers.methods.updateCustomerInformation(data.customer, data.order);
             shippingHelpers.methods.updateMultiShipInformation(data.order);
             summaryHelpers.updateTotals(data.order.totals);
             data.order.shipping.forEach(function (shipping) {
@@ -624,11 +715,9 @@ var exports = {
             $(button).prop('disabled', false);
         });
     }
-
-
 };
 
-[billingHelpers, shippingHelpers, addressHelpers].forEach(function (library) {
+[customerHelpers, billingHelpers, shippingHelpers, addressHelpers].forEach(function (library) {
     Object.keys(library).forEach(function (item) {
         if (typeof library[item] === 'object') {
             exports[item] = $.extend({}, exports[item], library[item]);

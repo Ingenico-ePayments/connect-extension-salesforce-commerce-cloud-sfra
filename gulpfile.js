@@ -20,7 +20,6 @@ function package() {
         '!node_modules/**',
         '!package/',
         '!documentation/*.docx',
-        '!Jenkinsfile',
         '!Dockerfile',
         '!gulpfile.js',
         '!.git/**'

@@ -53,6 +53,11 @@ function persistWebhook(webhook) {
     var tokens;
     var customerId;
 
+    // if it is a test webhook, return 200 immediately
+    if (webhook.id.startsWith('TEST-')) {
+        return;
+    }
+
     // Check if the custom object already exists
     if (CustomObjectMgr.getCustomObject('ingenicoNotification', webhook.id) !== null) {
         throw new DuplicateWebhookError('Custom Object "ingenicoNotification" with event ID "' + webhook.id + '" already exists.');

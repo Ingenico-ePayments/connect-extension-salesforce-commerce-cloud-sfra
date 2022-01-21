@@ -2,6 +2,21 @@ var sfraPlaceOrder = module.superModule.placeOrder;
 var sfraSendConfirmationEmail = module.superModule.sendConfirmationEmail;
 
 /**
+ * Get country code for payment based on geolocation or billing address
+ * @param {Object} req - The local instance of the request object
+ * @param {dw.order.Basket} currentBasket - The current basket
+ * @returns {string} countryCode
+ */
+module.superModule.getCountryCodeForPayment = function getCountryCodeForPayment(req, currentBasket) {
+    const ingenicoPreferences = require('*/cartridge/scripts/ingenicoPreferences');
+    const countryCodeSetting = ingenicoPreferences.getCountryCodeSettingForPaymentValidation();
+    if (countryCodeSetting === 'BILLINGADDRESS') {
+        return currentBasket.billingAddress.countryCode.value;
+    }
+    return req.geolocation.countryCode;
+};
+
+/**
  * Validates payment
  * @param {Object} req - The local instance of the request object
  * @param {dw.order.Basket} currentBasket - The current basket
@@ -14,7 +29,8 @@ module.superModule.validatePayment = function validatePayment(req, currentBasket
     var applicablePaymentMethods;
     var creditCardPaymentMethod = PaymentMgr.getPaymentMethod(PaymentInstrument.METHOD_CREDIT_CARD);
     var paymentAmount = currentBasket.totalGrossPrice.value;
-    var countryCode = req.geolocation.countryCode;
+    var countryCode = module.superModule.getCountryCodeForPayment(req, currentBasket);
+
     var currentCustomer = req.currentCustomer.raw;
     var paymentInstruments = currentBasket.paymentInstruments;
     var result = {};
@@ -69,9 +85,7 @@ module.superModule.validatePayment = function validatePayment(req, currentBasket
  * @returns {boolean} is Ingenico order
  */
 module.superModule.isIngenicoOrder = function isIngenicoOrder(order) {
-    var iterator = order.paymentInstruments.iterator();
-    while (iterator.hasNext()) {
-        var paymentInstrument = iterator.next();
+    for (let paymentInstrument of order.paymentInstruments.toArray()) {
         if (paymentInstrument.paymentTransaction.custom.ingenicoHostedCheckoutId || paymentInstrument.paymentTransaction.custom.ingenicoTransactionId) {
             return true;
         }

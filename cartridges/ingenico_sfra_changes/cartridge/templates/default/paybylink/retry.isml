@@ -1,0 +1,46 @@
+<isdecorate template="common/layout/page">
+    <isscript>
+        var assets = require('*/cartridge/scripts/assets.js');
+        assets.addCss('/css/checkout/checkout.css');
+        assets.addJs('/js/checkoutRegistration.js');
+    </isscript>
+
+    <isif condition="${pdict.reportingURLs && pdict.reportingURLs.length}">
+        <isinclude template="reporting/reportingUrls" />
+    </isif>
+
+    <div class="hero slant-down hero-confirmation">
+        <h1 class="page-title">
+            <isif condition="${pdict.isPaymentRejected}">
+                ${Resource.msg('error.paybylink.title.rejected','ingenico',null)}
+            <iselseif condition="${pdict.isPaymentCancelled}">
+                ${Resource.msg('error.paybylink.title.cancelled','ingenico',null)}
+            <iselse>
+                ${Resource.msg('error.paybylink.title.unknown','ingenico',null)}
+            </isif>
+        </h1>
+    </div>
+
+
+    <div class="container receipt <isif condition="${pdict.order.shipping.length > 1}">multi-ship</isif>">
+
+        <div class="row">
+            <h2 class="order-thank-you-msg">
+                <isif condition="${pdict.isPaymentRejected}">
+                    ${Resource.msg('error.paybylink.message.rejected','ingenico',null)}
+                <iselseif condition="${pdict.isPaymentCancelled}">
+                    ${Resource.msg('error.paybylink.message.cancelled','ingenico',null)}
+
+                <iselse>
+                    ${Resource.msg('error.paybylink.message.unknown','ingenico',null)}
+                </isif>
+            </h2>
+        </div>
+
+        <isif condition="${pdict.isPaymentRejected || pdict.isPaymentCancelled}">
+            <div class="row">
+                <a class="btn btn-primary" href="${pdict.paymentLink}" role="button">Retry</a>
+            </div>
+        </isif>
+    </div>
+</isdecorate>

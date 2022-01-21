@@ -103,6 +103,15 @@
                 <externally-managed-flag>true</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
+            <attribute-definition attribute-id="customerId">
+                <display-name xml:lang="x-default">customer id</display-name>
+                <description xml:lang="x-default">Id of the customer</description>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
         </attribute-definitions>
         <group-definitions>
             <attribute-group group-id="general">
@@ -118,6 +127,7 @@
                 <attribute attribute-id="reference"/>
                 <attribute attribute-id="merchantReference"/>
                 <attribute attribute-id="processed"/>
+                <attribute attribute-id="customerId"/>
             </attribute-group>
         </group-definitions>
     </custom-type>

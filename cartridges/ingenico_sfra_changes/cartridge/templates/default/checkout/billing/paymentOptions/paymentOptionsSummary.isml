@@ -1,19 +1,34 @@
 <div class="payment-details">
     <isloop items="${pdict.order.billing.payment.selectedPaymentInstruments}" var="payment">
-        <isif condition="${payment.paymentMethod === 'HOSTED_CREDIT_CARD'}">
-            <isinclude template="checkout/billing/paymentOptions/hostedCheckoutSummary" />
+        <isif condition="${payment.paymentMethod === 'APPLE_PAY'}">
+            <isinclude template="checkout/billing/paymentOptions/applePaySummary" />
         </isif>
         <isif condition="${payment.paymentMethod === 'CREDIT_CARD'}">
             <isinclude template="checkout/billing/paymentOptions/creditCardSummary" />
         </isif>
+        <isif condition="${payment.paymentMethod === 'GOOGLE_PAY'}">
+            <isinclude template="checkout/billing/paymentOptions/googlePaySummary" />
+        </isif>
+        <isif condition="${payment.paymentMethod === 'HOSTED_CREDIT_CARD'}">
+            <isinclude template="checkout/billing/paymentOptions/hostedCheckoutSummary" />
+        </isif>
         <isif condition="${payment.paymentMethod === 'IDEAL'}">
             <isinclude template="checkout/billing/paymentOptions/idealSummary" />
         </isif>
-        <isif condition="${payment.paymentMethod === 'TRUSTLY'}">
-            <isinclude template="checkout/billing/paymentOptions/trustlySummary" />
+        <isif condition="${payment.paymentMethod === 'PAY_BY_LINK'}">
+            <isinclude template="checkout/billing/paymentOptions/hostedCheckoutSummary" />
         </isif>
         <isif condition="${payment.paymentMethod === 'PAYPAL'}">
             <isinclude template="checkout/billing/paymentOptions/paypalSummary" />
+        </isif>
+        <isif condition="${payment.paymentMethod === 'PAYSAFECARD'}">
+            <isinclude template="checkout/billing/paymentOptions/paysafecardSummary" />
+        </isif>
+        <isif condition="${payment.paymentMethod === 'SOFORT'}">
+            <isinclude template="checkout/billing/paymentOptions/sofortSummary" />
+        </isif>
+        <isif condition="${payment.paymentMethod === 'TRUSTLY'}">
+            <isinclude template="checkout/billing/paymentOptions/trustlySummary" />
         </isif>
     </isloop>
 </div>

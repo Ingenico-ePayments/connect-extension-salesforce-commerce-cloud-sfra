@@ -1,13 +1,54 @@
+/* global request */
+
 'use strict';
 
 var URLUtils = require('dw/web/URLUtils');
 var Resource = require('dw/web/Resource');
 
 var PAYMENT_PRODUCTS = {
-    IDEAL: 809,
-    TRUSTLY: 806,
-    PAYPAL: 840
+    GOOGLE_PAY: 320,
+    APPLE_PAY: 302,
+    IDEAL: 809
 };
+
+/**
+ * Convert amount to amount in cents.
+ * @param {number} amount that needs to be converted
+ * @returns {number} amount in cents
+ */
+function convertAmountToCents(amount) {
+    return Math.round(amount * 100);
+}
+
+/**
+ * Create a shoppingCart item
+ * @param {number} grossPriceInCents total amount in cents
+ * @param {number} pricePerItemInCents item amount in cents
+ * @param {string} description of the item
+ * @param {string} currencyCode currencyCode of the order
+ * @param {number} quantity item quantity
+ * @param {number} tax amount in cents
+ * @returns {Object} a shoppingCart item
+ */
+function createShoppingCartItem(grossPriceInCents, pricePerItemInCents, description, currencyCode, quantity, tax) {
+    return {
+        amountOfMoney: {
+            amount: grossPriceInCents,
+            currencyCode: currencyCode
+        },
+        invoiceData: {
+            description: description,
+            nrOfItems: quantity,
+            pricePerItem: pricePerItemInCents
+        },
+        orderLineDetails: {
+            lineAmountTotal: grossPriceInCents,
+            productPrice: pricePerItemInCents,
+            quantity: quantity,
+            taxAmount: tax
+        }
+    };
+}
 
 /**
  * Create shippingCart items
@@ -22,46 +63,16 @@ function createShoppingCart(order) {
     var ProductShippingLineItem = require('dw/order/ProductShippingLineItem');
 
     var items = collections.map(order.allLineItems, function (lineItem) {
-        var grossPriceInCents = lineItem.grossPrice.value.toFixed(2).replace('.', '');
+        var grossPriceInCents = convertAmountToCents(lineItem.grossPrice.value);
+        var tax = lineItem.tax.available ? convertAmountToCents(lineItem.tax.value) : 0;
+        var currencyCode = lineItem.grossPrice.currencyCode;
 
         if (lineItem instanceof ProductLineItem) {
-            var pricePerItemInCents = (lineItem.grossPrice.value / lineItem.quantity).toFixed(2).replace('.', '');
-            return {
-                amountOfMoney: {
-                    amount: grossPriceInCents,
-                    currencyCode: lineItem.grossPrice.currencyCode
-                },
-                invoiceData: {
-                    description: lineItem.productName,
-                    nrOfItems: lineItem.quantity,
-                    pricePerItem: pricePerItemInCents
-                },
-                orderLineDetails: {
-                    lineAmountTotal: grossPriceInCents,
-                    productPrice: pricePerItemInCents,
-                    quantity: lineItem.quantity,
-                    taxAmount: lineItem.tax
-                }
-            };
+            var pricePerItemInCents = convertAmountToCents(lineItem.grossPrice.value / lineItem.quantityValue);
+            return createShoppingCartItem(grossPriceInCents, pricePerItemInCents, lineItem.productName, currencyCode, lineItem.quantityValue, tax);
         } else if (lineItem instanceof ProductShippingLineItem || lineItem instanceof ShippingLineItem || lineItem instanceof PriceAdjustment) {
             var description = lineItem instanceof ShippingLineItem ? Resource.msg('label.order.shipping.cost', 'confirmation', null) : lineItem.lineItemText;
-            return {
-                amountOfMoney: {
-                    amount: grossPriceInCents,
-                    currencyCode: lineItem.grossPrice.currencyCode
-                },
-                invoiceData: {
-                    description: description,
-                    nrOfItems: 1,
-                    pricePerItem: grossPriceInCents
-                },
-                orderLineDetails: {
-                    lineAmountTotal: grossPriceInCents,
-                    productPrice: grossPriceInCents,
-                    quantity: 1,
-                    taxAmount: lineItem.tax
-                }
-            };
+            return createShoppingCartItem(grossPriceInCents, grossPriceInCents, description, currencyCode, 1, tax);
         }
         return {};
     });
@@ -85,9 +96,9 @@ function reverseString(str) {
 /**
  * Split the address line as street, house number and addition info
  * @param {Array} addressLines that needs to be splitted
- * @returns {Object} splittedAddress
+ * @returns {Object} splitAddress
  */
-function getSplittedAddress(addressLines) {
+function getSplitAddress(addressLines) {
     var address = addressLines.join(' ');
     address = address.trim().replace('nº', '');
 
@@ -115,14 +126,14 @@ function getSplittedAddress(addressLines) {
 *  @returns {Object} address object
  */
 function createAddress(address) {
-    var splittedAddress = getSplittedAddress([address.address1, address.address2]);
+    var splitAddress = getSplitAddress([address.address1, address.address2]);
     return {
-        additionalInfo: splittedAddress.additionalInfo,
+        additionalInfo: splitAddress.additionalInfo,
         city: address.city,
         countryCode: address.countryCode.value,
-        street: splittedAddress.street,
-        houseNumber: splittedAddress.houseNumber,
-        state: address.stateCode,
+        street: splitAddress.street,
+        houseNumber: splitAddress.houseNumber,
+        stateCode: address.stateCode,
         zip: address.postalCode
     };
 }
@@ -133,10 +144,9 @@ function createAddress(address) {
 *  @returns {Object} token response
  */
 function createTokenBody(encryptedCustomerInput) {
-    var body = {
+    return {
         encryptedCustomerInput: encryptedCustomerInput
     };
-    return body;
 }
 
 /**
@@ -146,11 +156,12 @@ function createTokenBody(encryptedCustomerInput) {
  * @returns {Object} order object
  */
 function createOrderBody(paymentInstrument, order) {
+    var Site = require('dw/system/Site');
     var merchantCustomerId = order.getCustomerNo() || 'Guest ' + order.getOrderNo();
     return {
         amountOfMoney: {
             currencyCode: paymentInstrument.paymentTransaction.amount.currencyCode,
-            amount: paymentInstrument.paymentTransaction.amount.value.toFixed(2).replace('.', '')
+            amount: convertAmountToCents(paymentInstrument.paymentTransaction.amount.value)
         },
         customer: {
             billingAddress: createAddress(order.billingAddress),
@@ -158,7 +169,12 @@ function createOrderBody(paymentInstrument, order) {
                 emailAddress: order.customerEmail,
                 phoneNumber: order.billingAddress.phone
             },
-            locale: order.getCustomerLocaleID(),
+            device: {
+                acceptHeader: request.httpHeaders.get('accept'),
+                ipAddress: request.getHttpRemoteAddress(),
+                userAgent: request.httpUserAgent
+            },
+            locale: order.getCustomerLocaleID() === 'default' || order.getCustomerLocaleID() == null ? Site.getCurrent().defaultLocale : order.getCustomerLocaleID(),
             merchantCustomerId: merchantCustomerId,
             personalInformation: {
                 name: {
@@ -219,6 +235,7 @@ function createCardPaymentMethodSpecificInput(order, requiresApproval, tokenize,
         token: token,
         tokenize: tokenize,
         threeDSecure: {
+            authenticationFlow: 'browser',
             redirectionData: {
                 returnUrl: URLUtils.abs(
                     'Ingenico-ShowConfirmation',
@@ -233,7 +250,7 @@ function createCardPaymentMethodSpecificInput(order, requiresApproval, tokenize,
 
 /**
  * Create a hosted checkout object
- * @param {dw.order.PaymentInstrument} paymentInstrument containing the information of the payment
+ * @param {dw.order.OrderPaymentInstrument} paymentInstrument containing the information of the payment
  * @param {dw.order.Order} order order linked to the payment
  * @param {boolean} requiresApproval indicates whether payment must be approved
  * @param {string} variantId of the hosted checkout for a registered customer flow
@@ -283,7 +300,7 @@ function createRedirectPaymentMethodSpecificInput(order, requiresApproval, payme
  * @param {dw.order.Order} order order linked to the payment
  * @param {boolean} requiresApproval indicates whether payment must be approved
  * @param {Object} paymentMethodSpecificInput that is required for certain payment products
- * @param {boolean} paymentProductId of the payment
+ * @param {boolean} paymentProductId of the payment method
  * @returns {Object} order object
  */
 function createRedirectPaymentMethodBody(paymentInstrument, order, requiresApproval, paymentMethodSpecificInput, paymentProductId) {
@@ -311,13 +328,32 @@ function createCardPaymentMethodBody(paymentInstrument, order, requiresApproval,
     };
 }
 
+/**
+ * Create a request body for a mobile payment method
+ * @param {dw.order.PaymentInstrument} paymentInstrument containing the information of the payment
+ * @param {dw.order.Order} order order linked to the payment
+ * @param {string} encryptedCustomerInput encrypted blob containing apple payment token
+ * @param {number} paymentProductId of the payment method
+ * @returns {Object} payload
+ */
+function createMobilePaymentBody(paymentInstrument, order, encryptedCustomerInput, paymentProductId) {
+    return {
+        order: createOrderBody(paymentInstrument, order),
+        mobilePaymentMethodSpecificInput: {
+            encryptedPaymentData: encryptedCustomerInput,
+            paymentProductId: paymentProductId
+        }
+    };
+}
+
 module.exports = {
     createHostedCheckoutBody: createHostedCheckoutBody,
     createTokenBody: createTokenBody,
     createRedirectPaymentMethodBody: createRedirectPaymentMethodBody,
     createCardPaymentMethodBody: createCardPaymentMethodBody,
+    createMobilePaymentBody: createMobilePaymentBody,
     PAYMENT_PRODUCTS: PAYMENT_PRODUCTS,
 
     /* expose for unit-testing */
-    getSplittedAddress: getSplittedAddress
+    getSplitAddress: getSplitAddress
 };

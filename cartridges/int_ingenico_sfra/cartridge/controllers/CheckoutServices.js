@@ -53,9 +53,7 @@ server.append('PlaceOrder', function (req, res, next) {
     }
 
     var exclusivePaymentResponse;
-    var iterator = order.paymentInstruments.iterator();
-    while (iterator.hasNext()) {
-        var paymentInstrument = iterator.next();
+    for (let paymentInstrument of order.paymentInstruments.toArray()) {
         if (paymentInstrument.paymentTransaction.custom.ingenicoRedirect) {
             if (exclusivePaymentResponse) { // Cannot have two redirect targets
                 Transaction.wrap(function () { OrderMgr.failOrder(order, true); });
@@ -71,7 +69,7 @@ server.append('PlaceOrder', function (req, res, next) {
                 orderToken: order.orderToken,
                 continueUrl: paymentInstrument.paymentTransaction.custom.ingenicoRedirect
             };
-        } else if (paymentInstrument.paymentMethod === 'CREDIT_CARD') {
+        } else if (paymentInstrument.paymentMethod === 'CREDIT_CARD' || paymentInstrument.paymentMethod === 'GOOGLE_PAY' || paymentInstrument.paymentMethod === 'APPLE_PAY') {
             exclusivePaymentResponse = {
                 error: false,
                 orderID: order.orderNo,

@@ -155,7 +155,7 @@ function getGenericIngenicoService(service, ingenicoEndpoint, pathVariables, bod
 
 /**
  * Determine the service URL given the provided environment.
- * @param {string} environment the chosen environement
+ * @param {string} environment the chosen environment
  * @returns {string} the service URL
  */
 function getApiServiceUrl(environment) {
@@ -170,8 +170,9 @@ function getApiServiceUrl(environment) {
         case 'PROD':
             prefix = 'world';
             break;
-        default: ingenicoLogger.error('Unknown environment {0}.', environment); break;
-
+        default:
+            ingenicoLogger.error('Unknown environment {0}.', environment);
+            break;
     }
     return 'https://' + prefix + '.api-ingenico.com';
 }

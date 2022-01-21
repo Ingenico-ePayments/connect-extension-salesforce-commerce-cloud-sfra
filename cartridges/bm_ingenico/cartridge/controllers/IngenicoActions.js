@@ -1,27 +1,20 @@
 'use strict';
 
-/* Script includes */
-var server = require('server');
+const server = require('server');
 
 /**
  * Find the Ingenico payment instrument of the order
  * @param {string} orderNumber of the order
- * @returns {dw.order.PaymentTransaction} paymentTransaction
+ * @returns {dw.order.OrderPaymentInstrument} paymentTransaction
  */
 function getIngenicoPaymentInstrument(orderNumber) {
-    var OrderMgr = require('dw/order/OrderMgr');
-    var order = OrderMgr.getOrder(orderNumber);
-    var paymentInstruments = order.getPaymentInstruments();
-    var iterator = paymentInstruments.iterator();
-    var result;
-    while (iterator.hasNext()) {
-        var paymentInstrument = iterator.next();
-        if (paymentInstrument.paymentTransaction.paymentProcessor.getID() === 'INGENICO') {
-            result = paymentInstrument;
-            break;
-        }
-    }
-    return result;
+    const OrderMgr = require('dw/order/OrderMgr');
+    const order = OrderMgr.getOrder(orderNumber);
+    const paymentInstruments = order.getPaymentInstruments().toArray()
+        .filter(function (paymentInstrument) {
+            return paymentInstrument.paymentTransaction.paymentProcessor.getID() === 'INGENICO';
+        });
+    return paymentInstruments.length > 0 ? paymentInstruments[0] : null;
 }
 
 /**
@@ -30,49 +23,51 @@ function getIngenicoPaymentInstrument(orderNumber) {
  * @param {Object} payload of the result
  */
 function saveIngenicoCustomPaymentProperties(orderNumber, payload) {
-    var Transaction = require('dw/system/Transaction');
-    var OrderMgr = require('dw/order/OrderMgr');
-    var order = OrderMgr.getOrder(orderNumber);
-    var result = getIngenicoPaymentInstrument(orderNumber);
+    const Transaction = require('dw/system/Transaction');
+    const OrderMgr = require('dw/order/OrderMgr');
+    const ingenicoResponseHelpers = require('*/cartridge/scripts/ingenicoResponseHelpers');
 
-    if (result.paymentTransaction.custom.ingenicoResult !== payload.status) {
+    const order = OrderMgr.getOrder(orderNumber);
+    const paymentInstrument = getIngenicoPaymentInstrument(orderNumber);
+
+    if (paymentInstrument) {
         Transaction.wrap(function () {
-            // update the tracking history
-            order.trackOrderChange('Ingenico payment update for transaction ID ' + result.paymentTransaction.custom.ingenicoTransactionId + ', status changed to ' + payload.status + '.');
-
-            result.paymentTransaction.custom.ingenicoResult = payload.status;
-            result.paymentTransaction.custom.ingenicoIsCancellable = payload.statusOutput.isCancellable;
-            result.paymentTransaction.custom.ingenicoIsRefundable = payload.statusOutput.isRefundable;
+            if (paymentInstrument.paymentTransaction.custom.ingenicoResult !== payload.status) {
+                // update the tracking history
+                order.trackOrderChange('Ingenico payment update for transaction ID ' + paymentInstrument.paymentTransaction.custom.ingenicoTransactionId + ', status changed to ' + payload.status + '.');
+            }
+            ingenicoResponseHelpers.populatePaymentTransactionWithPaymentOutput(paymentInstrument.paymentTransaction, payload);
         });
     }
 }
 
 server.get('Action', function (req, res, next) {
-    var ingenicoHelpers = require('*/cartridge/scripts/ingenicoHelpers');
-    var OrderMgr = require('dw/order/OrderMgr');
-    var Resource = require('dw/web/Resource');
+    const ingenicoHelpers = require('*/cartridge/scripts/ingenicoHelpers');
+    const OrderMgr = require('dw/order/OrderMgr');
+    const Resource = require('dw/web/Resource');
 
-    var action = req.querystring.action;
-    var result;
-    var order;
-    var error = false;
+    const action = req.querystring.action;
+    let result;
+    let order;
+    let error = false;
 
     switch (action) {
         case 'paymentStatus':
             var paymentId = req.querystring.paymentId;
+            var orderNumber = String(req.querystring.orderNumber);
             if (!paymentId) {
                 // check if the ingenico payment status has been updated to PAID, webhook might arrive late
-                order = OrderMgr.getOrder(req.querystring.orderNumber);
-                var paymentInstrument = getIngenicoPaymentInstrument(req.querystring.orderNumber);
-                if (paymentInstrument.paymentTransaction.custom.ingenicoResult === 'CAPTURE_REQUESTED') {
-                    paymentId = getIngenicoPaymentInstrument(req.querystring.orderNumber).paymentTransaction.custom.ingenicoTransactionId;
+                order = OrderMgr.getOrder(orderNumber);
+                var paymentInstrument = getIngenicoPaymentInstrument(orderNumber);
+                if (paymentInstrument && paymentInstrument.paymentTransaction.custom.ingenicoResult === 'CAPTURE_REQUESTED') {
+                    paymentId = paymentInstrument.paymentTransaction.custom.ingenicoTransactionId;
                     result = ingenicoHelpers.getPaymentStatus(paymentId);
                 }
             } else {
                 result = ingenicoHelpers.getPaymentStatus(paymentId);
             }
             if (result) {
-                saveIngenicoCustomPaymentProperties(req.querystring.orderNumber, result);
+                saveIngenicoCustomPaymentProperties(orderNumber, result);
             }
             break;
         case 'cancelPayment':

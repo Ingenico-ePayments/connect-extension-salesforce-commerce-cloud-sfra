@@ -1,6 +1,19 @@
 module.exports = {
     root: true,
     extends: 'airbnb-base/legacy',
+    parserOptions: {
+        ecmaVersion: 6,
+        sourceType: "module"
+    },
+    globals: {
+        $: "readonly",
+        request: "readonly",
+        response: "readonly",
+        session: "readonly",
+        dw: "readonly",
+        document: "readonly",
+        window: "readonly"
+    },
     rules: {
         'import/no-unresolved': 'off',
         'indent': [

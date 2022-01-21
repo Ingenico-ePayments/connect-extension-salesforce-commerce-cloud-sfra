@@ -1,0 +1,29 @@
+<isscript>
+    var assets = require('*/cartridge/scripts/assets.js');
+    assets.addJs('/js/applepay.js');
+    assets.addCss('/css/applepay.css');
+</isscript>
+<isset name="billingForm" value="${pdict.forms.billingForm}" scope="page" />
+<fieldset class="tab-pane ${paymentLoop.first ? 'active' : ''} applepay-content" id="applepay-content" role="tabpanel" ${paymentLoop.first ? '' : 'disabled'}>
+    <fieldset class="payment-form-fields">
+
+        <input type="hidden" class="form-control"
+                name="${pdict.forms.billingForm.paymentMethod.htmlName}"
+                value="APPLE_PAY"
+        >
+
+        <div class="row mb-2">
+            <div class="col-sm-12">
+                <small><em>${Resource.msg('ingenico.applepay.checkout.message', 'ingenico', null)}</em></small>
+            </div>
+        </div>
+
+        <div class="apple-button-container" id="apple-button-container" style="display:none;">
+            <div class="apple-pay-button apple-pay-button-black btn-block" id="apple-pay-button" data-from-checkout="true"></div>
+        </div>
+
+        <isset name="applePayData" value="${require('*/cartridge/scripts/checkout/ingenicoCheckoutHelper').getIngenicoCheckoutData('APPLE_PAY')}" scope="page" />
+        <input type="hidden" id="ingenico_applepay_data" value="${JSON.stringify(applePayData)}">
+
+    </fieldset>
+</fieldset>

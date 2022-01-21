@@ -71,10 +71,8 @@ server.append('SubmitPayment', function (req, res, next) {
 
             if (billingData.storedPaymentUUID) {
                 billingAddress.setPhone(req.currentCustomer.profile.phone);
-                currentBasket.setCustomerEmail(req.currentCustomer.profile.email);
             } else {
                 billingAddress.setPhone(billingData.phone.value);
-                currentBasket.setCustomerEmail(billingData.email.value);
             }
         });
 
@@ -167,7 +165,7 @@ server.append('SubmitPayment', function (req, res, next) {
             usingMultiShipping = false;
         }
 
-        hooksHelper('app.customer.subscription', 'subscribeTo', [paymentForm.subscribe.checked, paymentForm.contactInfoFields.email.htmlValue], function () { });
+        hooksHelper('app.customer.subscription', 'subscribeTo', [paymentForm.subscribe.checked, currentBasket.customerEmail], function () {});
 
         var currentLocale = Locale.getLocale(req.locale.id);
 
